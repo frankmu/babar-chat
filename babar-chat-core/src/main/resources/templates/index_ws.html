@@ -1,0 +1,146 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Babar Chat</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link th:href="@{/bootstrap/css/bootstrap.min.css}" rel="stylesheet"/>
+    <link th:href="@{/css/chat.css}" rel="stylesheet" type="text/css"/>
+    <script type="text/javascript" th:src="@{/js/jquery-3.1.1.min.js}"></script>
+    <script type="text/javascript" th:src="@{/js/ws_chat.js}"></script>
+    <script type="text/javascript" th:src="@{/bootstrap/js/bootstrap.min.js}"></script>
+    <style>
+
+    </style>
+
+
+</head>
+
+<body>
+<table class="table">
+    <thead>
+    <th><h2>Babar Chat</h2></th>
+    <th>
+        <div align="right"><label id="ws_status"></label><a href="/logout">Logout</a></div>
+    </th>
+    </thead>
+</table>
+<div class="row">
+    <div class="col-xs-6 w-50">
+        <h4 align="center" class="w-100 sub-header">Recent Contact</h4>
+        <span class="p-3">Unread:<i id="totalUnread" class="unread" th:if="${contactVO} != null"
+                                     th:text="${contactVO.totalUnread}"></i></span>
+        <div class="table-responsive text-center">
+            <table class="table table-hover table-bordered table-striped w-100">
+                <thead class="w-100 bg-info">
+                <th>Photo</th>
+                <th>Name</th>
+                <th>Last Message</th>
+                <th>Unread</th>
+                <th>Action</th>
+                </thead>
+                <tbody id="contactsBody" class="w-100">
+                <tr th:unless="${contactVO} == null" th:each=" contactInfo : ${contactVO.contactInfoList}"
+                    th:attr="chat_uid=${contactInfo.otherUid}">
+                    <td><img width="50px" th:src="@{'/images/'+${contactInfo.otherAvatar}}"/></td>
+                    <td th:text="${contactInfo.otherName}"></td>
+                    <td th:text="${contactInfo.content}"></td>
+                    <td th:text="${contactInfo.convUnread}"></td>
+                    <td>
+                        <button type="button" class="btn btn-info" data-toggle="modal" data-target="#chatModal"
+                                th:attr="data-recipient_id=${contactInfo.otherUid},data-recipient_name=${contactInfo.otherName}">
+                            Chat
+                        </button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="col-xs-6 w-50">
+        <h4 align="center" class="w-50 sub-header pl-5">All Contacts</h4>
+        <input hidden="true" id="sender_id" th:if="${loginUser} != null" th:value="${loginUser.uid}"/>
+        <input hidden="true"
+               id="sender_name"
+               th:if="${loginUser} != null"
+               th:value="${loginUser.username}"/>
+        <input hidden="true"
+               id="sender_avatar"
+               th:if="${loginUser} != null"
+               th:value="${loginUser.avatar}"/>
+        <div class="table-responsive text-center pl-5">
+            <table class="table table-hover table-bordered w-50">
+                <thead class="w-50 bg-success">
+                <th>Photo</th>
+                <th>Name</th>
+                <th>Action</th>
+                </thead>
+                <tbody class="w-75">
+                <tr th:if="${user} != null" th:each=" user : ${otherUsers}">
+                    <td><img width="50px" th:src="@{'/images/'+${user.avatar}}"/></td>
+                    <td th:text="${user.username}"></td>
+                    <td>
+                        <button type="button" class="btn btn-info" data-toggle="modal" data-target="#chatModal"
+                                th:attr="data-recipient_id=${user.uid},data-recipient_name=${user.username}">Chat
+                        </button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="chatModal" tabindex="-1" role="dialog" aria-labelledby="chatPaneLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="chatPaneLabel">Chat</h4>
+            </div>
+            <div class="modal-body p-1">
+                <ul class="chat-thread" style="overflow-scrolling: auto">
+                </ul>
+                <div class="form-group">
+                    <input id="recipient_id" hidden="true"/>
+                    <input id="recipient_name" hidden="true"/>
+                    <textarea class="form-control" id="message-text"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" id="sendBtn" class="btn btn-primary">Send</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    /*<![CDATA[*/
+    var websocket;
+    $(document).ready(function () {
+        init();
+    });
+
+    $('#chatModal').on('show.bs.modal', function (event) {
+        queryMsg(event);
+    })
+
+
+    $("#message-text").keydown(function (event) {
+        if (event.keyCode == "13") {
+            sendMsg(event);
+        }
+    });
+
+    $("#sendBtn").click(function (event) {
+        sendMsg(event);
+    });
+
+    setInterval(queryUnread, 3000);
+
+    /*]]>*/
+</script>
+</body>
+
+</html>
