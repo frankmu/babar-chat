@@ -11,6 +11,7 @@ import com.babar.chat.entity.MessageContent;
 import com.babar.chat.entity.MessageRelation;
 import com.babar.chat.entity.User;
 import com.babar.chat.message.Contact;
+import com.babar.chat.message.ContactInfo;
 import com.babar.chat.message.Message;
 import com.babar.chat.util.Constants;
 import com.google.common.collect.Lists;
@@ -176,7 +177,7 @@ public class MessageServiceImpl implements MessageService {
                     if (null != convUnreadObj) {
                         convUnread = Long.parseLong((String) convUnreadObj);
                     }
-                    Contact.ContactInfo contactInfo = contactVO.new ContactInfo(otherUser.getUid(), otherUser.getUsername(), otherUser.getAvatar(), mid, contact.getType(), contentVO.getContent(), convUnread, contact.getCreateTime());
+                    ContactInfo contactInfo = new ContactInfo(otherUser.getUid(), otherUser.getUsername(), otherUser.getAvatar(), mid, contact.getType(), contentVO.getContent(), convUnread, contact.getCreateTime());
                     contactVO.appendContact(contactInfo);
                 }
             });

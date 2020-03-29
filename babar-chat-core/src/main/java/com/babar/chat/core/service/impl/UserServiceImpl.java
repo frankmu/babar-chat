@@ -16,6 +16,7 @@ import com.babar.chat.entity.User;
 import com.babar.chat.exception.InvalidUserInfoException;
 import com.babar.chat.exception.UserNotExistException;
 import com.babar.chat.message.Contact;
+import com.babar.chat.message.ContactInfo;
 
 import java.util.List;
 import java.util.Optional;
@@ -90,7 +91,7 @@ public class UserServiceImpl implements UserService {
                     if (null != convUnreadObj) {
                         convUnread = Long.parseLong((String) convUnreadObj);
                     }
-                    Contact.ContactInfo contactInfo = contactVO.new ContactInfo(otherUser.get().getUid(), otherUser.get().getUsername(), otherUser.get().getAvatar(), mid, contact.getType(), contentVO.get().getContent(), convUnread, contact.getCreateTime());
+                    ContactInfo contactInfo = new ContactInfo(otherUser.get().getUid(), otherUser.get().getUsername(), otherUser.get().getAvatar(), mid, contact.getType(), contentVO.get().getContent(), convUnread, contact.getCreateTime());
                     contactVO.appendContact(contactInfo);
                 }
             });
@@ -98,4 +99,15 @@ public class UserServiceImpl implements UserService {
         }
         return null;
     }
+    
+    @Override
+    public List<User> getAllUsers(){
+    		return userRepository.findAll();
+    }
+
+
+	@Override
+	public Contact getContactsByOwnerId(long ownerUserId) {
+		return getContacts(userRepository.getOne(ownerUserId));
+	}
 }

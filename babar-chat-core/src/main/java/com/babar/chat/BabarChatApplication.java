@@ -9,15 +9,15 @@ import org.springframework.boot.web.servlet.support.SpringBootServletInitializer
 
 @SpringBootApplication(scanBasePackages = {"com.babar.chat"})
 @ServletComponentScan(basePackages = {"com.babar.chat.core.controller"})
-public class Starter extends SpringBootServletInitializer {
+public class BabarChatApplication extends SpringBootServletInitializer {
 
     @Override
     protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
         System.setProperty("Log4jContextSelector", "org.apache.logging.log4j.core.async.AsyncLoggerContextSelector");
-        return application.sources(Starter.class);
+        return application.sources(BabarChatApplication.class);
     }
 
     public static void main(String[] args) {
-        SpringApplication.run(Starter.class, args);
+        SpringApplication.run(BabarChatApplication.class, args);
     }
 }

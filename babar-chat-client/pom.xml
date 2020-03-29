@@ -9,4 +9,27 @@
 	</parent>
 	<packaging>jar</packaging>
 	<artifactId>babar-chat-client</artifactId>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+			<version>${springboot.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-thymeleaf</artifactId>
+			<version>${springboot.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>babar-chat</groupId>
+			<artifactId>babar-chat-common</artifactId>
+			<version>${babar.chat.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+			<version>${gson.version}</version>
+		</dependency>
+	</dependencies>
 </project>

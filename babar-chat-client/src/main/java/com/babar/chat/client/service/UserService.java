@@ -1,4 +1,4 @@
-package com.babar.chat.core.service;
+package com.babar.chat.client.service;
 
 import java.util.List;
 
@@ -11,11 +11,5 @@ public interface UserService {
 
     List<User> getAllUsersExcept(long exceptUid);
 
-    List<User> getAllUsersExcept(User exceptUser);
-
-    Contact getContacts(User ownerUser);
-    
-    Contact getContactsByOwnerId(long ownerUserId);
-    
-    List<User> getAllUsers();
+    Contact getContacts(long ownerUserId);
 }
