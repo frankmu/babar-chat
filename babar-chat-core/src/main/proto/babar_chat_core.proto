@@ -1,0 +1,111 @@
+syntax = "proto3";
+option java_multiple_files = true;
+option java_package = "com.babar.chat.core.generate";
+option java_outer_classname = "BabarChatCoreProto";
+
+package com.babar.chat.core;
+
+service Greeter {
+  rpc SayHello (HelloRequest) returns (HelloReply) {}
+}
+
+message HelloRequest {
+  string name = 1;
+}
+
+message HelloReply {
+  string message = 1;
+}
+
+message User {
+  int64 uid = 1;
+  string username = 2;
+  string password = 3;
+  string email = 4;
+  string avatar = 5;
+}
+
+message ContactInfo {
+	int64 otherUid = 1;
+	string otherName = 2;
+  	string otherAvatar = 3;
+  	int64 mid = 4;
+  	int32 type = 5;
+  	string content = 6;
+  	int64 convUnread = 7;
+  	string createTime = 8;
+}
+
+message Contact {
+	int64 ownerUid = 1;
+	string ownerAvatar = 2;
+  	string ownerName = 3;
+  	int64 totalUnread = 4;
+  	repeated ContactInfo contactInfoList = 5;
+}
+
+message LoginRequest {
+	string email = 1;
+  	string password = 2;
+}
+
+message UserIdRequest {
+	int64 uid = 1;
+}
+
+message UserList {
+	repeated User userList = 1;
+}
+
+message SendMessageRequest {
+	int64 senderUid = 1;
+	int64 recipientUid = 2;
+	string content = 3;
+	int32 type = 4;
+}
+
+message  Message {
+	int64 mid = 1;
+	string content = 2;
+	int64 ownerUid = 3;
+	int32 type = 4;
+	int64 otherUid = 5;
+	string createTime = 6;
+	string ownerUidAvatar = 7;
+	string otherUidAvatar = 8;
+	string ownerName = 9;
+	string otherName = 10;
+}
+
+message MessageList {
+	repeated Message messageList = 1;
+}
+
+message ConversationMessageRequest {
+	int64 ownerUid = 1;
+	int64 otherUid = 2;
+}
+
+message NewMessageRequest {
+	int64 ownerUid = 1;
+	int64 otherUid = 2;
+	int64 fromMid = 3;
+}
+
+message TotalUnreadCount {
+	int64 totalUnread = 1;
+}
+
+service UserService {
+  rpc Login (LoginRequest) returns (User) {};
+  rpc GetUsersExceptUserId (UserIdRequest) returns (UserList) {};
+  rpc GetContactByOwnerUserId (UserIdRequest) returns (Contact) {};
+}
+
+service MessageService {
+  rpc SendMessage (SendMessageRequest) returns (Message) {};
+  rpc GetConversationMessage (ConversationMessageRequest) returns (MessageList) {};
+  rpc GetNewMessageFrom (NewMessageRequest) returns (MessageList) {};
+  rpc GetContacts (UserIdRequest) returns (Contact) {};
+  rpc GetTotalUnread (UserIdRequest) returns (TotalUnreadCount) {};
+}

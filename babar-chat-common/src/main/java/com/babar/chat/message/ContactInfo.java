@@ -9,11 +9,6 @@ public class ContactInfo {
     private Long mid;
     private Integer type;
     private String content;
-
-    public Long getConvUnread() {
-        return convUnread;
-    }
-
     private Long convUnread;
     private Date createTime;
 
@@ -26,6 +21,10 @@ public class ContactInfo {
         this.content = content;
         this.convUnread = convUnread;
         this.createTime = createTime;
+    }
+    
+    public Long getConvUnread() {
+        return convUnread;
     }
 
     public Long getOtherUid() {

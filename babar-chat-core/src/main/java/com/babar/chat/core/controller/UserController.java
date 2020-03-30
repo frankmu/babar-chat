@@ -25,15 +25,15 @@ public class UserController {
 		return userService.login(email, password);
 	}
 
-	@GetMapping(path = "/getAllUsersExceptId")
+	@GetMapping(path = "/getUsersExceptUserId")
 	@ResponseBody
-	public List<User> getAllUsersExcept(@RequestParam long exceptUid) {
+	public List<User> getUsersExceptUserId(@RequestParam long exceptUid) {
 		return userService.getAllUsersExcept(exceptUid);
 	}
 
-	@GetMapping(path = "/getContacts")
+	@GetMapping(path = "/getContactByOwnerUserId")
 	@ResponseBody
-	public Contact getContacts(@RequestParam long ownerUserId) {
+	public Contact getContactByOwnerUserId(@RequestParam long ownerUserId) {
 		return userService.getContactsByOwnerId(ownerUserId);
 	}
 	

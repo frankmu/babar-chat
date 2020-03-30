@@ -35,14 +35,14 @@ public class UserServiceRestImpl implements UserService {
 
 	@Override
 	public List<User> getAllUsersExcept(long exceptUid) {
-		User[] users = restTemplate.getForObject("/getAllUsersExceptId?exceptUid={exceptUid}", User[].class, exceptUid);
+		User[] users = restTemplate.getForObject("/getUsersExceptUserId?exceptUid={exceptUid}", User[].class, exceptUid);
 		return Arrays.asList(users);
 	}
 
 	@Override
 	public Contact getContacts(long ownerUserId) {
 		try {
-			ResponseEntity<String> response = restTemplate.getForEntity("/getContacts?ownerUserId={ownerUserId}",
+			ResponseEntity<String> response = restTemplate.getForEntity("/getContactByOwnerUserId?ownerUserId={ownerUserId}",
 					String.class, ownerUserId);
 			ObjectMapper mapper = new ObjectMapper();
 			JsonNode root = mapper.readTree(response.getBody());

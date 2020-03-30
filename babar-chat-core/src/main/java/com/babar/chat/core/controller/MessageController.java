@@ -19,33 +19,33 @@ public class MessageController {
 	@Autowired
 	private MessageService messageService;
 
-	@PostMapping(path = "/sendNewMsg")
+	@PostMapping(path = "/sendMessage")
 	@ResponseBody
-	public Message sendNewMsg(@RequestParam long senderUid, @RequestParam long recipientUid, @RequestParam String content, @RequestParam int msgType) {
+	public Message sendMessage(@RequestParam long senderUid, @RequestParam long recipientUid, @RequestParam String content, @RequestParam int msgType) {
 		return messageService.sendNewMsg(senderUid, recipientUid, content, msgType);
 	}
 
-	@GetMapping(path = "/queryConversationMsg")
+	@GetMapping(path = "/getConversationMessage")
 	@ResponseBody
-	public List<Message> queryConversationMsg(@RequestParam long ownerUid, @RequestParam long otherUid) {
+	public List<Message> getConversationMessage(@RequestParam long ownerUid, @RequestParam long otherUid) {
 		return messageService.queryConversationMsg(ownerUid, otherUid);
 	}
 
-	@GetMapping(path = "/queryNewerMsgFrom")
+	@GetMapping(path = "/getNewMessageFrom")
 	@ResponseBody
-	public List<Message> queryNewerMsgFrom(@RequestParam long ownerUid, @RequestParam long otherUid, @RequestParam long fromMid) {
+	public List<Message> getNewMessageFrom(@RequestParam long ownerUid, @RequestParam long otherUid, @RequestParam long fromMid) {
 		return messageService.queryNewerMsgFrom(ownerUid, otherUid, fromMid);
 	}
 
-	@GetMapping(path = "/queryContacts")
+	@GetMapping(path = "/getContacts")
 	@ResponseBody
-	public Contact queryContacts(@RequestParam long ownerUid) {
+	public Contact getContacts(@RequestParam long ownerUid) {
 		return messageService.queryContacts(ownerUid);
 	}
 
-	@GetMapping(path = "/queryTotalUnread")
+	@GetMapping(path = "/getTotalUnread")
 	@ResponseBody
-	public long queryTotalUnread(@RequestParam long ownerUid) {
+	public long getTotalUnread(@RequestParam long ownerUid) {
 		return messageService.queryTotalUnread(ownerUid);
 	}
 }

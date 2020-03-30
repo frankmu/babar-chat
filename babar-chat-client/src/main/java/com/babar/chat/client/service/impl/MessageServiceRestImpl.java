@@ -26,7 +26,7 @@ public class MessageServiceRestImpl implements MessageService {
 	public Message sendNewMsg(long senderUid, long recipientUid, String content, int msgType) {
 		try {
 			ResponseEntity<String> response = restTemplate.postForEntity(
-					"/sendNewMsg?senderUid={senderUid}&recipientUid={recipientUid}&content={content}&msgType={msgType}",
+					"/sendMessage?senderUid={senderUid}&recipientUid={recipientUid}&content={content}&msgType={msgType}",
 					null, String.class, senderUid, recipientUid, content, msgType);
 			ObjectMapper mapper = new ObjectMapper();
 			JsonNode root = mapper.readTree(response.getBody());
@@ -43,7 +43,7 @@ public class MessageServiceRestImpl implements MessageService {
 		List<Message> list = new ArrayList<Message>();
 		try {
 			ResponseEntity<String> response = restTemplate.getForEntity(
-					"/queryConversationMsg?ownerUid={ownerUid}&otherUid={otherUid}", String.class, ownerUid, otherUid);
+					"/getConversationMessage?ownerUid={ownerUid}&otherUid={otherUid}", String.class, ownerUid, otherUid);
 			ObjectMapper mapper = new ObjectMapper();
 			JsonNode root = mapper.readTree(response.getBody());
 			for (JsonNode node : root) {
@@ -61,7 +61,7 @@ public class MessageServiceRestImpl implements MessageService {
 		List<Message> list = new ArrayList<Message>();
 		try {
 			ResponseEntity<String> response = restTemplate.getForEntity(
-					"/queryNewerMsgFrom?ownerUid={ownerUid}&otherUid={otherUid}&fromMid={fromMid}", String.class,
+					"/getNewMessageFrom?ownerUid={ownerUid}&otherUid={otherUid}&fromMid={fromMid}", String.class,
 					ownerUid, otherUid, fromMid);
 			if(response.getBody() != null) {
 				ObjectMapper mapper = new ObjectMapper();
@@ -78,7 +78,7 @@ public class MessageServiceRestImpl implements MessageService {
 
 	@Override
 	public long queryTotalUnread(long ownerUid) {
-		Long totalUnread = restTemplate.getForObject("/queryTotalUnread?ownerUid={ownerUid}", Long.class, ownerUid);
+		Long totalUnread = restTemplate.getForObject("/getTotalUnread?ownerUid={ownerUid}", Long.class, ownerUid);
 		return totalUnread;
 	}
 
