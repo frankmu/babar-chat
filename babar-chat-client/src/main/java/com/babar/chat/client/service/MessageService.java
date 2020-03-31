@@ -2,7 +2,6 @@ package com.babar.chat.client.service;
 
 import java.util.List;
 
-import com.babar.chat.message.Contact;
 import com.babar.chat.message.Message;
 
 public interface MessageService {

@@ -10,6 +10,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -23,22 +24,23 @@ public class GrpcServiceProvider {
 	
 	@Autowired
 	MessageServiceImplGrpc messageServiceGrpc;
+	
+	@Value("${babar.chat.grpc.service.port}")
+	private int grpcServicePort;
 
     @PostConstruct
     private void start() throws IOException, InterruptedException {
     	new Thread(() -> {
-    		int port = 50051;
             try {
-				server = ServerBuilder.forPort(port)
+				server = ServerBuilder.forPort(grpcServicePort)
 				        .addService(userServiceGrpc)
 				        .addService(messageServiceGrpc)
 				        .build()
 				        .start();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-            logger.info("==> Server started, listening on " + port);
+            logger.info("==> Server started, listening on " + grpcServicePort);
 
             Runtime.getRuntime().addShutdownHook(new Thread() {
                 @Override
@@ -52,29 +54,16 @@ public class GrpcServiceProvider {
                 try {
 					server.awaitTermination();
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
             }
     	}).start();
-        
-        
-        
     }
 
     @PreDestroy
     public void stop() {
         if (server != null) {
             server.shutdown();
-        }
-    }
-
-    /**
-     * Await termination on the main thread since the grpc library uses daemon threads.
-     */
-    private void blockUntilShutdown() throws InterruptedException {
-        if (server != null) {
-            server.awaitTermination();
         }
     }
 }

@@ -44,3 +44,9 @@ websocket:
       userThreads: 50
       workerThreads: 0
       idleTimes: 5
+      
+babar:
+    chat:
+        grpc:
+            service:
+                port: 50051

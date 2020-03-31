@@ -3,19 +3,14 @@ package com.babar.chat.core.service.grpc.provider;
 import com.babar.chat.core.generate.Contact;
 import com.babar.chat.core.generate.ContactInfo;
 import com.babar.chat.core.generate.ConversationMessageRequest;
-import com.babar.chat.core.generate.LoginRequest;
 import com.babar.chat.core.generate.Message;
 import com.babar.chat.core.generate.MessageList;
 import com.babar.chat.core.generate.MessageServiceGrpc.MessageServiceImplBase;
 import com.babar.chat.core.generate.NewMessageRequest;
 import com.babar.chat.core.generate.SendMessageRequest;
 import com.babar.chat.core.generate.TotalUnreadCount;
-import com.babar.chat.core.generate.User;
 import com.babar.chat.core.generate.UserIdRequest;
-import com.babar.chat.core.generate.UserList;
-import com.babar.chat.core.generate.UserServiceGrpc.UserServiceImplBase;
 import com.babar.chat.core.service.MessageService;
-import com.babar.chat.core.service.UserService;
 
 import io.grpc.stub.StreamObserver;
 
