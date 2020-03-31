@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.babar.chat.core.service.UserService;
 import com.babar.chat.dao.MessageContactRepository;
@@ -56,7 +57,8 @@ public class UserServiceImpl implements UserService {
     }
 
 
-    @Override
+    @SuppressWarnings("unlikely-arg-type")
+	@Override
     public List<User> getAllUsersExcept(long exceptUid) {
         List<User> otherUsers = userRepository.findAll();
         otherUsers.remove(userRepository.findById(exceptUid));
@@ -107,6 +109,7 @@ public class UserServiceImpl implements UserService {
 
 
 	@Override
+	@Transactional
 	public Contact getContactsByOwnerId(long ownerUserId) {
 		return getContacts(userRepository.getOne(ownerUserId));
 	}

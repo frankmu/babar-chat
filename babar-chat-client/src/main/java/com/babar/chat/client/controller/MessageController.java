@@ -7,6 +7,7 @@ import com.babar.chat.message.Message;
 import com.google.gson.Gson;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,12 +22,13 @@ import java.util.List;
 public class MessageController {
 
     @Autowired
+    @Qualifier("messageServiceGrpc")
     private MessageService messageService;
     
     @Autowired
+    @Qualifier("userServiceGrpc")
     private UserService userService;
-
-
+    
     @PostMapping(path = "/sendMsg")
     @ResponseBody
     public String sendMsg(@RequestParam Long senderUid, @RequestParam Long recipientUid, String content, Integer msgType, Model model, HttpSession session) {

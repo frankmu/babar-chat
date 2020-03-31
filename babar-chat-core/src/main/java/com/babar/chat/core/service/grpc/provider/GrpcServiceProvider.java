@@ -26,25 +26,40 @@ public class GrpcServiceProvider {
 
     @PostConstruct
     private void start() throws IOException, InterruptedException {
-        int port = 50051;
-        server = ServerBuilder.forPort(port)
-                .addService(new HelloWorldImplGrpc())
-                .addService(userServiceGrpc)
-                .addService(messageServiceGrpc)
-                .build()
-                .start();
-        logger.info("==> Server started, listening on " + port);
+    	new Thread(() -> {
+    		int port = 50051;
+            try {
+				server = ServerBuilder.forPort(port)
+				        .addService(userServiceGrpc)
+				        .addService(messageServiceGrpc)
+				        .build()
+				        .start();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+            logger.info("==> Server started, listening on " + port);
 
-        Runtime.getRuntime().addShutdownHook(new Thread() {
-            @Override
-            public void run() {
-                System.err.println("*** shutting down gRPC server since JVM is shutting down");
-                GrpcServiceProvider.this.stop();
-                System.err.println("*** server shut down");
+            Runtime.getRuntime().addShutdownHook(new Thread() {
+                @Override
+                public void run() {
+                    System.err.println("*** shutting down gRPC server since JVM is shutting down");
+                    GrpcServiceProvider.this.stop();
+                    System.err.println("*** server shut down");
+                }
+            });
+            if (server != null) {
+                try {
+					server.awaitTermination();
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
             }
-        });
+    	}).start();
         
-        this.blockUntilShutdown();
+        
+        
     }
 
     @PreDestroy

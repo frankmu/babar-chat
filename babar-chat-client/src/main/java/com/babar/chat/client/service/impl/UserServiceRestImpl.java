@@ -19,7 +19,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-@Component
+@Component("userServiceRest")
 public class UserServiceRestImpl implements UserService {
 
 	@Autowired

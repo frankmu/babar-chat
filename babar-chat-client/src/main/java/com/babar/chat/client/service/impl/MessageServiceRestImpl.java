@@ -16,7 +16,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-@Component
+@Component("messageServiceRest")
 public class MessageServiceRestImpl implements MessageService {
 
 	@Autowired
