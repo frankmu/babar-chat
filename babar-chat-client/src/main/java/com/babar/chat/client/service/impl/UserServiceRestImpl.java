@@ -7,7 +7,6 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import com.babar.chat.client.service.UserService;
@@ -19,7 +18,6 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-@Component("userServiceRest")
 public class UserServiceRestImpl implements UserService {
 
 	@Autowired

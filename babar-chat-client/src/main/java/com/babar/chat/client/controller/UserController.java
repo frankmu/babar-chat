@@ -22,7 +22,6 @@ import java.util.List;
 public class UserController {
 
     @Autowired
-    @Qualifier("userServiceGrpc")
     private UserService userService;
 
     @GetMapping(path = "/")

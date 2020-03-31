@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import com.babar.chat.client.service.MessageService;
 import com.babar.chat.core.generate.ConversationMessageRequest;
@@ -21,7 +20,6 @@ import com.babar.chat.core.generate.UserIdRequest;
 
 import io.grpc.ManagedChannel;
 
-@Component("messageServiceGrpc")
 public class MessageServiceGrpcImpl implements MessageService {
 
 	@Autowired

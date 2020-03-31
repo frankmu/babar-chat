@@ -12,7 +12,6 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import com.babar.chat.client.service.UserService;
 import com.babar.chat.core.generate.Contact;
@@ -22,7 +21,6 @@ import com.babar.chat.core.generate.UserIdRequest;
 import com.babar.chat.core.generate.UserList;
 import com.babar.chat.core.generate.UserServiceGrpc.UserServiceBlockingStub;
 
-@Component("userServiceGrpc")
 public class UserServiceGrpcImpl implements UserService {
 
 	@Autowired

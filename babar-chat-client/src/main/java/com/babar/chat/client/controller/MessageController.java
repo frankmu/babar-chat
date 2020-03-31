@@ -22,11 +22,9 @@ import java.util.List;
 public class MessageController {
 
     @Autowired
-    @Qualifier("messageServiceGrpc")
     private MessageService messageService;
     
     @Autowired
-    @Qualifier("userServiceGrpc")
     private UserService userService;
     
     @PostMapping(path = "/sendMsg")
