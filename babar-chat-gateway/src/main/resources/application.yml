@@ -1,0 +1,31 @@
+server:
+  port: 8082
+spring:
+  redis:
+    host: localhost
+    port: 6379
+      
+babar:
+    chat:
+        grpc:
+            service:
+                host: localhost
+                port: 50051
+        websocket:
+            readIdleSecond: 0
+            writeIdleSecond: 0
+            allIdleSecond: 360
+            sendBuff: -1
+            recvBuff: -1
+            backlog: 500000
+            bossThreads: 1
+            connTimeoutMills: 10000
+            soLinger: 0
+            port: 8080
+            reuseAddr: true
+            useDirectBuffer: true
+            useEpoll: true
+            useMemPool: true
+            userThreads: 50
+            workerThreads: 0
+            idleTimes: 5

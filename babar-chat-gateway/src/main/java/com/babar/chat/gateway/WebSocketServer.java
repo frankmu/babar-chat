@@ -76,7 +76,7 @@ public class WebSocketServer {
                 // Add application logic handler
                 pipeline.addLast(websocketRouterHandler);
                 // Add the idel processor
-                pipeline.addLast(new IdleStateHandler(0, 0, serverConfig.getAllIdleSecond()));
+                pipeline.addLast(new IdleStateHandler(0, 0, serverConfig.allIdleSecond));
                 pipeline.addLast(closeIdleChannelHandler);
 
             }

@@ -1,4 +1,4 @@
-package com.babar.chat.client.grpc.consumer;
+package com.babar.chat.gateway.service.impl;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.babar.chat.client.service.MessageService;
+import com.babar.chat.gateway.service.MessageService;
 import com.babar.chat.core.generate.ConversationMessageRequest;
 import com.babar.chat.core.generate.Message;
 import com.babar.chat.core.generate.MessageList;

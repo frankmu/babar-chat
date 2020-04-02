@@ -1,6 +1,6 @@
 package com.babar.chat.gateway.handler;
 
-import com.babar.chat.core.service.MessageService;
+import com.babar.chat.gateway.service.MessageService;
 import com.babar.chat.gateway.util.EnhancedThreadFactory;
 import com.babar.chat.message.Message;
 import com.google.gson.Gson;
@@ -73,8 +73,8 @@ public class WebsocketRouterHandler extends SimpleChannelInboundHandler<WebSocke
 				if (messageVO != null) {
 					JsonObject jsonObject = new JsonObject();
 					jsonObject.add("type", new JsonPrimitive(2));
-					jsonObject.add("data", new Gson().toJsonTree(messageVO).getAsJsonArray());
-					msgs = jsonObject.getAsString();
+					jsonObject.add("data", new Gson().toJsonTree(messageVO));
+					msgs = jsonObject.toString();
 				}
 				ctx.writeAndFlush(new TextWebSocketFrame(msgs));
 				break;
@@ -88,8 +88,8 @@ public class WebsocketRouterHandler extends SimpleChannelInboundHandler<WebSocke
 				if (messageContent != null) {
 					JsonObject jsonObject = new JsonObject();
 					jsonObject.add("type", new JsonPrimitive(3));
-					jsonObject.add("data", new Gson().toJsonTree(messageContent).getAsJsonArray());
-					ctx.writeAndFlush(new TextWebSocketFrame(jsonObject.getAsString()));
+					jsonObject.add("data", new Gson().toJsonTree(messageContent));
+					ctx.writeAndFlush(new TextWebSocketFrame(jsonObject.toString()));
 				}
 				break;
 
@@ -132,7 +132,7 @@ public class WebsocketRouterHandler extends SimpleChannelInboundHandler<WebSocke
 			AtomicLong generator = channel.attr(TID_GENERATOR).get();
 			long tid = generator.incrementAndGet();
 			message.add("tid", new JsonPrimitive(tid));
-			channel.writeAndFlush(new TextWebSocketFrame(message.getAsString())).addListener(future -> {
+			channel.writeAndFlush(new TextWebSocketFrame(message.toString())).addListener(future -> {
 				if (future.isCancelled()) {
 					logger.warn("future has been cancelled. {}, channel: {}", message, channel);
 				} else if (future.isSuccess()) {

@@ -40,7 +40,7 @@ public class GrpcServiceProvider {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-            logger.info("==> Server started, listening on " + grpcServicePort);
+            logger.info("Grpc Server started, listening on " + grpcServicePort);
 
             Runtime.getRuntime().addShutdownHook(new Thread() {
                 @Override

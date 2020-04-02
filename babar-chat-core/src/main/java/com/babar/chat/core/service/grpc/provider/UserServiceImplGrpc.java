@@ -11,6 +11,7 @@ import com.babar.chat.core.service.UserService;
 
 import io.grpc.stub.StreamObserver;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,6 +23,8 @@ public class UserServiceImplGrpc extends UserServiceImplBase {
 
 	@Autowired
 	private UserService userService;
+	
+	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S");
 
 	@Override
 	public void login(LoginRequest req, StreamObserver<User> responseObserver) {
@@ -66,7 +69,7 @@ public class UserServiceImplGrpc extends UserServiceImplBase {
 					.setType(contactInfo.getType())
 					.setContent(contactInfo.getContent())
 					.setConvUnread(contactInfo.getConvUnread())
-					.setCreateTime(contactInfo.getCreateTime().toString())
+					.setCreateTime(sdf.format(contactInfo.getCreateTime()))
 					.build();
 		}).collect(Collectors.toList());
 		Contact res = Contact.newBuilder()

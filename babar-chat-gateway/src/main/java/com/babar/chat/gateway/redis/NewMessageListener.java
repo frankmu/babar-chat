@@ -1,4 +1,4 @@
-package com.babar.chat.core.redis;
+package com.babar.chat.gateway.redis;
 
 import com.babar.chat.gateway.handler.WebsocketRouterHandler;
 import com.google.gson.JsonObject;

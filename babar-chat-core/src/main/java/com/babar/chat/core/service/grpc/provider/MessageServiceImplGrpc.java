@@ -14,6 +14,7 @@ import com.babar.chat.core.service.MessageService;
 
 import io.grpc.stub.StreamObserver;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,6 +26,8 @@ public class MessageServiceImplGrpc extends MessageServiceImplBase {
 
 	@Autowired
 	private MessageService messageService;
+	
+	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S");
 
 	@Override
 	public void sendMessage(SendMessageRequest req, StreamObserver<Message> responseObserver) {
@@ -35,7 +38,7 @@ public class MessageServiceImplGrpc extends MessageServiceImplBase {
 				.setOwnerUid(message.getOwnerUid())
 				.setType(message.getType())
 				.setOtherUid(message.getOtherUid())
-				.setCreateTime(message.getCreateTime().toString())
+				.setCreateTime(sdf.format(message.getCreateTime()))
 				.setOwnerUidAvatar(message.getOwnerUidAvatar())
 				.setOtherUidAvatar(message.getOtherUidAvatar())
 				.setOwnerName(message.getOwnerName())
@@ -55,7 +58,7 @@ public class MessageServiceImplGrpc extends MessageServiceImplBase {
 					.setOwnerUid(message.getOwnerUid())
 					.setType(message.getType())
 					.setOtherUid(message.getOtherUid())
-					.setCreateTime(message.getCreateTime().toString())
+					.setCreateTime(sdf.format(message.getCreateTime()))
 					.setOwnerUidAvatar(message.getOwnerUidAvatar())
 					.setOtherUidAvatar(message.getOtherUidAvatar())
 					.setOwnerName(message.getOwnerName())
@@ -77,7 +80,7 @@ public class MessageServiceImplGrpc extends MessageServiceImplBase {
 					.setOwnerUid(message.getOwnerUid())
 					.setType(message.getType())
 					.setOtherUid(message.getOtherUid())
-					.setCreateTime(message.getCreateTime().toString())
+					.setCreateTime(sdf.format(message.getCreateTime()))
 					.setOwnerUidAvatar(message.getOwnerUidAvatar())
 					.setOtherUidAvatar(message.getOtherUidAvatar())
 					.setOwnerName(message.getOwnerName())
@@ -101,7 +104,7 @@ public class MessageServiceImplGrpc extends MessageServiceImplBase {
 					.setType(contactInfo.getType())
 					.setContent(contactInfo.getContent())
 					.setConvUnread(contactInfo.getConvUnread())
-					.setCreateTime(contactInfo.getCreateTime().toString())
+					.setCreateTime(sdf.format(contactInfo.getCreateTime()))
 					.build();
 		}).collect(Collectors.toList());
 		Contact res = Contact.newBuilder()
