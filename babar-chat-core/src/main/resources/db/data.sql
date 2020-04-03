@@ -1,4 +1,4 @@
-INSERT INTO IM_USER (uid, username,password, email, avatar) VALUES
+INSERT INTO USER (uid, username,password, email, avatar) VALUES
   (1000, 'a', '1234','a@gmail.com', 'zhangsan.png'),
   (1001, 'b', '1234','b@gmail.com', 'lisi.png'),
   (1002, 'c', '1234','c@hotmail.com', 'wangwu.png');

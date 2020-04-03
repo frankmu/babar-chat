@@ -2,7 +2,7 @@ server:
   port: 8081
 spring:
   datasource:
-    url: jdbc:h2:~/im
+    url: jdbc:h2:~/babar_chat
     driver-class-name: org.h2.Driver
     username: sa
     password: 123456

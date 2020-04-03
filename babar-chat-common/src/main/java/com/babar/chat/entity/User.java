@@ -3,7 +3,7 @@ package com.babar.chat.entity;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "IM_USER")
+@Table(name = "USER")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

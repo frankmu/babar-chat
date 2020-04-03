@@ -43,7 +43,7 @@ public class UserServiceImpl implements UserService {
         List<User> users = userRepository.findByEmail(email);
         if (null == users || users.isEmpty()) {
             log.warn("User doesn't exist" + email);
-            throw new UserNotExistException("User doesn't exist" + email);
+            throw new UserNotExistException("User doesn't exist: " + email);
         } else {
             User user = users.get(0);
             if (user.getPassword().equals(password)) {
