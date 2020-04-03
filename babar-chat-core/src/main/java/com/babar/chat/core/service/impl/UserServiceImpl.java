@@ -11,13 +11,13 @@ import com.babar.chat.core.service.UserService;
 import com.babar.chat.dao.MessageContactRepository;
 import com.babar.chat.dao.MessageContentRepository;
 import com.babar.chat.dao.UserRepository;
+import com.babar.chat.dto.Contact;
+import com.babar.chat.dto.ContactInfo;
 import com.babar.chat.entity.MessageContact;
-import com.babar.chat.entity.MessageContent;
+import com.babar.chat.entity.Message;
 import com.babar.chat.entity.User;
 import com.babar.chat.exception.InvalidUserInfoException;
 import com.babar.chat.exception.UserNotExistException;
-import com.babar.chat.message.Contact;
-import com.babar.chat.message.ContactInfo;
 
 import java.util.List;
 import java.util.Optional;
@@ -84,7 +84,7 @@ public class UserServiceImpl implements UserService {
             final Contact contactVO = new Contact(ownerUser.getUid(), ownerUser.getUsername(), ownerUser.getAvatar(), totalUnread);
             contacts.stream().forEach(contact -> {
                 Long mid = contact.getMid();
-                Optional<MessageContent> contentVO = contentRepository.findById(mid);
+                Optional<Message> contentVO = contentRepository.findById(mid);
                 Optional<User> otherUser = userRepository.findById(contact.getOtherUid());
 
                 if (null != contentVO) {

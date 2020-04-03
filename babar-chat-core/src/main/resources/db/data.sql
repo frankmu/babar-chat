@@ -4,14 +4,14 @@ INSERT INTO USER (uid, username,password, email, avatar) VALUES
   (1002, 'c', '1234','c@hotmail.com', 'wangwu.png');
 
 
-  INSERT INTO IM_MSG_CONTENT (mid, content, sender_id, recipient_id, msg_type, create_time) VALUES
+INSERT INTO MESSAGE (mid, content, sender_id, recipient_id, msg_type, create_time) VALUES
   (1, 'Hi there', 1000, 1001, 0, '2019-09-04 11:52:38.000'),
   (2, 'Hello', 1001, 1000, 0, '2019-09-04 11:53:38.000'),
   (3, 'What you want to eat tonight?', 1000, 1001, 0, '2019-09-04 11:54:38.000'),
   (4, 'Any ideas?', 1000, 1001, 0, '2019-09-04 11:55:38.000'),
   (5, 'No idea', 1001, 1000, 0, '2019-09-04 11:56:38.000');
 
-  INSERT INTO IM_MSG_RELATION (owner_uid, other_uid, mid, type, create_time) VALUES
+INSERT INTO IM_MSG_RELATION (owner_uid, other_uid, mid, type, create_time) VALUES
   (1000, 1001, 1, 0, '2019-09-04 11:52:38.000'),
   (1001, 1000, 1, 1, '2019-09-04 11:52:38.000'),
   (1001, 1000, 2, 0, '2019-09-04 11:53:38.000'),
@@ -23,6 +23,6 @@ INSERT INTO USER (uid, username,password, email, avatar) VALUES
   (1001, 1000, 5, 0, '2019-09-04 11:56:38.000'),
   (1000, 1001, 5, 1, '2019-09-04 11:56:38.000');
 
-  INSERT INTO IM_MSG_CONTACT (owner_uid, other_uid, mid, type, create_time) VALUES
+INSERT INTO IM_MSG_CONTACT (owner_uid, other_uid, mid, type, create_time) VALUES
   (1000, 1001, 5, 1, '2019-09-04 11:56:38.000'),
   (1001, 1000, 5, 0, '2019-09-04 11:56:38.000');

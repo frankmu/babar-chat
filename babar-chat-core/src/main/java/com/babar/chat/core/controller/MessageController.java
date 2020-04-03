@@ -1,8 +1,8 @@
 package com.babar.chat.core.controller;
 
 import com.babar.chat.core.service.MessageService;
-import com.babar.chat.message.Contact;
-import com.babar.chat.message.Message;
+import com.babar.chat.dto.Contact;
+import com.babar.chat.dto.MessageDTO;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -21,19 +21,19 @@ public class MessageController {
 
 	@PostMapping(path = "/sendMessage")
 	@ResponseBody
-	public Message sendMessage(@RequestParam long senderUid, @RequestParam long recipientUid, @RequestParam String content, @RequestParam int msgType) {
+	public MessageDTO sendMessage(@RequestParam long senderUid, @RequestParam long recipientUid, @RequestParam String content, @RequestParam int msgType) {
 		return messageService.sendNewMsg(senderUid, recipientUid, content, msgType);
 	}
 
 	@GetMapping(path = "/getConversationMessage")
 	@ResponseBody
-	public List<Message> getConversationMessage(@RequestParam long ownerUid, @RequestParam long otherUid) {
+	public List<MessageDTO> getConversationMessage(@RequestParam long ownerUid, @RequestParam long otherUid) {
 		return messageService.queryConversationMsg(ownerUid, otherUid);
 	}
 
 	@GetMapping(path = "/getNewMessageFrom")
 	@ResponseBody
-	public List<Message> getNewMessageFrom(@RequestParam long ownerUid, @RequestParam long otherUid, @RequestParam long fromMid) {
+	public List<MessageDTO> getNewMessageFrom(@RequestParam long ownerUid, @RequestParam long otherUid, @RequestParam long fromMid) {
 		return messageService.queryNewerMsgFrom(ownerUid, otherUid, fromMid);
 	}
 

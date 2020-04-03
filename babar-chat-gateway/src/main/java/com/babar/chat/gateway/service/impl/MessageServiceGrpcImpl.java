@@ -29,7 +29,7 @@ public class MessageServiceGrpcImpl implements MessageService {
 	MessageServiceBlockingStub messageServiceBlockingStub;
 
 	@Override
-	public com.babar.chat.message.Message sendNewMsg(long senderUid, long recipientUid, String content, int msgType) {
+	public com.babar.chat.dto.MessageDTO sendNewMsg(long senderUid, long recipientUid, String content, int msgType) {
 		SendMessageRequest req = SendMessageRequest.newBuilder().setSenderUid(senderUid).setRecipientUid(recipientUid)
 				.setContent(content).setType(msgType).build();
 		Message message = messageServiceBlockingStub.sendMessage(req);
@@ -39,7 +39,7 @@ public class MessageServiceGrpcImpl implements MessageService {
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
-		com.babar.chat.message.Message res = new com.babar.chat.message.Message(message.getMid(), message.getContent(),
+		com.babar.chat.dto.MessageDTO res = new com.babar.chat.dto.MessageDTO(message.getMid(), message.getContent(),
 				message.getOwnerUid(), message.getType(), message.getOtherUid(), createTime,
 				message.getOwnerUidAvatar(), message.getOtherUidAvatar(), message.getOwnerName(),
 				message.getOtherName());
@@ -47,19 +47,19 @@ public class MessageServiceGrpcImpl implements MessageService {
 	}
 
 	@Override
-	public List<com.babar.chat.message.Message> queryConversationMsg(long ownerUid, long otherUid) {
+	public List<com.babar.chat.dto.MessageDTO> queryConversationMsg(long ownerUid, long otherUid) {
 		ConversationMessageRequest req = ConversationMessageRequest.newBuilder().setOwnerUid(ownerUid)
 				.setOtherUid(otherUid).build();
 
 		MessageList messageList = messageServiceBlockingStub.getConversationMessage(req);
-		List<com.babar.chat.message.Message> messages = messageList.getMessageListList().stream().map(message -> {
+		List<com.babar.chat.dto.MessageDTO> messages = messageList.getMessageListList().stream().map(message -> {
 			Date createTime = null;
 			try {
 				createTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S").parse(message.getCreateTime());
 			} catch (ParseException e) {
 				e.printStackTrace();
 			}
-			return new com.babar.chat.message.Message(message.getMid(), message.getContent(), message.getOwnerUid(),
+			return new com.babar.chat.dto.MessageDTO(message.getMid(), message.getContent(), message.getOwnerUid(),
 					message.getType(), message.getOtherUid(), createTime, message.getOwnerUidAvatar(),
 					message.getOtherUidAvatar(), message.getOwnerName(), message.getOtherName());
 		}).collect(Collectors.toList());
@@ -67,18 +67,18 @@ public class MessageServiceGrpcImpl implements MessageService {
 	}
 
 	@Override
-	public List<com.babar.chat.message.Message> queryNewerMsgFrom(long ownerUid, long otherUid, long fromMid) {
+	public List<com.babar.chat.dto.MessageDTO> queryNewerMsgFrom(long ownerUid, long otherUid, long fromMid) {
 		NewMessageRequest req = NewMessageRequest.newBuilder().setOwnerUid(ownerUid).setOtherUid(otherUid).setFromMid(fromMid).build();
 
 		MessageList messageList = messageServiceBlockingStub.getNewMessageFrom(req);
-		List<com.babar.chat.message.Message> messages = messageList.getMessageListList().stream().map(message -> {
+		List<com.babar.chat.dto.MessageDTO> messages = messageList.getMessageListList().stream().map(message -> {
 			Date createTime = null;
 			try {
 				createTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S").parse(message.getCreateTime());
 			} catch (ParseException e) {
 				e.printStackTrace();
 			}
-			return new com.babar.chat.message.Message(message.getMid(), message.getContent(), message.getOwnerUid(),
+			return new com.babar.chat.dto.MessageDTO(message.getMid(), message.getContent(), message.getOwnerUid(),
 					message.getType(), message.getOtherUid(), createTime, message.getOwnerUidAvatar(),
 					message.getOtherUidAvatar(), message.getOwnerName(), message.getOtherName());
 		}).collect(Collectors.toList());

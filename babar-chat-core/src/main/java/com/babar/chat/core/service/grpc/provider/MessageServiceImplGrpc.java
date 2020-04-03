@@ -31,7 +31,7 @@ public class MessageServiceImplGrpc extends MessageServiceImplBase {
 
 	@Override
 	public void sendMessage(SendMessageRequest req, StreamObserver<Message> responseObserver) {
-		com.babar.chat.message.Message message = messageService.sendNewMsg(req.getSenderUid(), req.getRecipientUid(), req.getContent(), req.getType());
+		com.babar.chat.dto.MessageDTO message = messageService.sendNewMsg(req.getSenderUid(), req.getRecipientUid(), req.getContent(), req.getType());
 		Message res = Message.newBuilder()
 				.setMid(message.getMid())
 				.setContent(message.getContent())
@@ -50,7 +50,7 @@ public class MessageServiceImplGrpc extends MessageServiceImplBase {
 	
 	@Override
 	public void getConversationMessage(ConversationMessageRequest req, StreamObserver<MessageList> responseObserver) {
-		List<com.babar.chat.message.Message> messages = messageService.queryConversationMsg(req.getOwnerUid(), req.getOtherUid());
+		List<com.babar.chat.dto.MessageDTO> messages = messageService.queryConversationMsg(req.getOwnerUid(), req.getOtherUid());
 		List<Message> messageList = messages.stream().map(message -> {
 			return Message.newBuilder()
 					.setMid(message.getMid())
@@ -72,7 +72,7 @@ public class MessageServiceImplGrpc extends MessageServiceImplBase {
 	
 	@Override
 	public void getNewMessageFrom(NewMessageRequest req, StreamObserver<MessageList> responseObserver) {
-		List<com.babar.chat.message.Message> messages = messageService.queryNewerMsgFrom(req.getOwnerUid(), req.getOtherUid(), req.getFromMid());
+		List<com.babar.chat.dto.MessageDTO> messages = messageService.queryNewerMsgFrom(req.getOwnerUid(), req.getOtherUid(), req.getFromMid());
 		List<Message> messageList = messages.stream().map(message -> {
 			return Message.newBuilder()
 					.setMid(message.getMid())
@@ -94,7 +94,7 @@ public class MessageServiceImplGrpc extends MessageServiceImplBase {
 	
 	@Override
 	public void getContacts(UserIdRequest req, StreamObserver<Contact> responseObserver) {
-		com.babar.chat.message.Contact contact = messageService.queryContacts(req.getUid());
+		com.babar.chat.dto.Contact contact = messageService.queryContacts(req.getUid());
 		List<ContactInfo> contactInfoList = contact.getContactInfoList().stream().map(contactInfo -> {
 			return ContactInfo.newBuilder()
 					.setOtherUid(contactInfo.getOtherUid())

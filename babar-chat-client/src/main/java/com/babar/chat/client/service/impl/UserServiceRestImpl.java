@@ -10,9 +10,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import com.babar.chat.client.service.UserService;
+import com.babar.chat.dto.Contact;
+import com.babar.chat.dto.ContactInfo;
 import com.babar.chat.entity.User;
-import com.babar.chat.message.Contact;
-import com.babar.chat.message.ContactInfo;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;

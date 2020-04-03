@@ -2,15 +2,15 @@ package com.babar.chat.client.service;
 
 import java.util.List;
 
-import com.babar.chat.message.Message;
+import com.babar.chat.dto.MessageDTO;
 
 public interface MessageService {
 
-    Message sendNewMsg(long senderUid, long recipientUid, String content, int msgType);
+    MessageDTO sendNewMsg(long senderUid, long recipientUid, String content, int msgType);
 
-    List<Message> queryConversationMsg(long ownerUid, long otherUid);
+    List<MessageDTO> queryConversationMsg(long ownerUid, long otherUid);
 
-    List<Message> queryNewerMsgFrom(long ownerUid, long otherUid, long fromMid);
+    List<MessageDTO> queryNewerMsgFrom(long ownerUid, long otherUid, long fromMid);
     
     long queryTotalUnread(long ownerUid);
 }

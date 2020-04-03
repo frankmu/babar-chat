@@ -1,8 +1,8 @@
-package com.babar.chat.message;
+package com.babar.chat.dto;
 
 import java.util.Date;
 
-public class Message {
+public class MessageDTO {
     private Long mid;
     private String content;
     private Long ownerUid;
@@ -22,7 +22,7 @@ public class Message {
         return otherName;
     }
 
-    public Message(Long mid, String content, Long ownerUid, Integer type, Long otherUid, Date createTime, String ownerUidAvatar, String otherUidAvatar, String ownerName, String otherName) {
+    public MessageDTO(Long mid, String content, Long ownerUid, Integer type, Long otherUid, Date createTime, String ownerUidAvatar, String otherUidAvatar, String ownerName, String otherName) {
         this.mid = mid;
         this.content = content;
         this.ownerUid = ownerUid;

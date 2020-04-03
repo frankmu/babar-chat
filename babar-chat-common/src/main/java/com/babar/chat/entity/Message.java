@@ -4,8 +4,8 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name = "IM_MSG_CONTENT")
-public class MessageContent {
+@Table(name = "MESSAGE")
+public class Message {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long mid;

@@ -2,8 +2,8 @@ package com.babar.chat.core.service;
 
 import java.util.List;
 
-import com.babar.chat.message.Contact;
-import com.babar.chat.message.Message;
+import com.babar.chat.dto.Contact;
+import com.babar.chat.dto.MessageDTO;
 
 public interface MessageService {
 
@@ -15,14 +15,14 @@ public interface MessageService {
      * @param msgType
      * @return
      */
-    Message sendNewMsg(long senderUid, long recipientUid, String content, int msgType);
+    MessageDTO sendNewMsg(long senderUid, long recipientUid, String content, int msgType);
 
     /**
      * @param ownerUid
      * @param otherUid
      * @return
      */
-    List<Message> queryConversationMsg(long ownerUid, long otherUid);
+    List<MessageDTO> queryConversationMsg(long ownerUid, long otherUid);
 
     /**
      * @param ownerUid
@@ -30,7 +30,7 @@ public interface MessageService {
      * @param fromMid
      * @return
      */
-    List<Message> queryNewerMsgFrom(long ownerUid, long otherUid, long fromMid);
+    List<MessageDTO> queryNewerMsgFrom(long ownerUid, long otherUid, long fromMid);
 
     /**
      * @param ownerUid

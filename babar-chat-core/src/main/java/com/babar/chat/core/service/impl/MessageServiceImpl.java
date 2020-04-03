@@ -5,14 +5,14 @@ import com.babar.chat.dao.MessageContactRepository;
 import com.babar.chat.dao.MessageContentRepository;
 import com.babar.chat.dao.MessageRelationRepository;
 import com.babar.chat.dao.UserRepository;
+import com.babar.chat.dto.Contact;
+import com.babar.chat.dto.ContactInfo;
+import com.babar.chat.dto.MessageDTO;
 import com.babar.chat.entity.ContactMultiKeys;
 import com.babar.chat.entity.MessageContact;
-import com.babar.chat.entity.MessageContent;
+import com.babar.chat.entity.Message;
 import com.babar.chat.entity.MessageRelation;
 import com.babar.chat.entity.User;
-import com.babar.chat.message.Contact;
-import com.babar.chat.message.ContactInfo;
-import com.babar.chat.message.Message;
 import com.babar.chat.util.Constants;
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
@@ -40,10 +40,10 @@ public class MessageServiceImpl implements MessageService {
     private RedisTemplate redisTemplate;
 
     @Override
-    public Message sendNewMsg(long senderUid, long recipientUid, String content, int msgType) {
+    public MessageDTO sendNewMsg(long senderUid, long recipientUid, String content, int msgType) {
         Date currentTime = new Date();
         // Save the message content
-        MessageContent messageContent = new MessageContent();
+        Message messageContent = new Message();
         messageContent.setSenderId(senderUid);
         messageContent.setRecipientId(recipientUid);
         messageContent.setContent(content);
@@ -105,37 +105,37 @@ public class MessageServiceImpl implements MessageService {
         // Push the message to redis
         User self = userRepository.findById(senderUid).get();
         User other = userRepository.findById(recipientUid).get();
-        Message messageVO = new Message(mid, content, self.getUid(), messageContactSender.getType(), other.getUid(), messageContent.getCreateTime(), self.getAvatar(), other.getAvatar(), self.getUsername(), other.getUsername());
-        redisTemplate.convertAndSend(Constants.WEBSOCKET_MSG_TOPIC, new Gson().toJson(messageVO));
+        MessageDTO messageDTO = new MessageDTO(mid, content, self.getUid(), messageContactSender.getType(), other.getUid(), messageContent.getCreateTime(), self.getAvatar(), other.getAvatar(), self.getUsername(), other.getUsername());
+        redisTemplate.convertAndSend(Constants.WEBSOCKET_MSG_TOPIC, new Gson().toJson(messageDTO));
 
-        return messageVO;
+        return messageDTO;
     }
 
     @Override
-    public List<Message> queryConversationMsg(long ownerUid, long otherUid) {
+    public List<MessageDTO> queryConversationMsg(long ownerUid, long otherUid) {
         List<MessageRelation> relationList = relationRepository.findAllByOwnerUidAndOtherUidOrderByMidAsc(ownerUid, otherUid);
         return composeMessageVO(relationList, ownerUid, otherUid);
     }
 
     @Override
-    public List<Message> queryNewerMsgFrom(long ownerUid, long otherUid, long fromMid) {
+    public List<MessageDTO> queryNewerMsgFrom(long ownerUid, long otherUid, long fromMid) {
         List<MessageRelation> relationList = relationRepository.findAllByOwnerUidAndOtherUidAndMidIsGreaterThanOrderByMidAsc(ownerUid, otherUid, fromMid);
         return composeMessageVO(relationList, ownerUid, otherUid);
     }
 
-    private List<Message> composeMessageVO(List<MessageRelation> relationList, long ownerUid, long otherUid) {
+    private List<MessageDTO> composeMessageVO(List<MessageRelation> relationList, long ownerUid, long otherUid) {
         if (null != relationList && !relationList.isEmpty()) {
         		// Compose message index and content
-            List<Message> msgList = Lists.newArrayList();
+            List<MessageDTO> msgList = Lists.newArrayList();
             User self = userRepository.findById(ownerUid).get();
             User other = userRepository.findById(otherUid).get();
             relationList.stream().forEach(relation -> {
                 Long mid = relation.getMid();
-                MessageContent contentVO = contentRepository.findById(mid).get();
+                Message contentVO = contentRepository.findById(mid).get();
                 if (null != contentVO) {
                     String content = contentVO.getContent();
-                    Message messageVO = new Message(mid, content, relation.getOwnerUid(), relation.getType(), relation.getOtherUid(), relation.getCreateTime(), self.getAvatar(), other.getAvatar(), self.getUsername(), other.getUsername());
-                    msgList.add(messageVO);
+                    MessageDTO messageDTO = new MessageDTO(mid, content, relation.getOwnerUid(), relation.getType(), relation.getOtherUid(), relation.getCreateTime(), self.getAvatar(), other.getAvatar(), self.getUsername(), other.getUsername());
+                    msgList.add(messageDTO);
                 }
             });
 
@@ -169,7 +169,7 @@ public class MessageServiceImpl implements MessageService {
             Contact contactVO = new Contact(user.getUid(), user.getUsername(), user.getAvatar(), totalUnread);
             contacts.stream().forEach(contact -> {
                 Long mid = contact.getMid();
-                MessageContent contentVO = contentRepository.findById(mid).get();
+                Message contentVO = contentRepository.findById(mid).get();
                 User otherUser = userRepository.findById(contact.getOtherUid()).get();
 
                 if (null != contentVO) {

@@ -1,8 +1,8 @@
 package com.babar.chat.gateway.handler;
 
+import com.babar.chat.dto.MessageDTO;
 import com.babar.chat.gateway.service.MessageService;
 import com.babar.chat.gateway.util.EnhancedThreadFactory;
-import com.babar.chat.message.Message;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -68,7 +68,7 @@ public class WebsocketRouterHandler extends SimpleChannelInboundHandler<WebSocke
 			case 2: // Query message
 				long ownerUid = data.get("ownerUid").getAsLong();
 				long otherUid = data.get("otherUid").getAsLong();
-				List<Message> messageVO = messageService.queryConversationMsg(ownerUid, otherUid);
+				List<MessageDTO> messageVO = messageService.queryConversationMsg(ownerUid, otherUid);
 				String msgs = "";
 				if (messageVO != null) {
 					JsonObject jsonObject = new JsonObject();
@@ -84,7 +84,7 @@ public class WebsocketRouterHandler extends SimpleChannelInboundHandler<WebSocke
 				long recipientUid = data.get("recipientUid").getAsLong();
 				String content = data.get("content").getAsString();
 				int msgType = data.get("msgType").getAsInt();
-				Message messageContent = messageService.sendNewMsg(senderUid, recipientUid, content, msgType);
+				MessageDTO messageContent = messageService.sendNewMsg(senderUid, recipientUid, content, msgType);
 				if (messageContent != null) {
 					JsonObject jsonObject = new JsonObject();
 					jsonObject.add("type", new JsonPrimitive(3));

@@ -8,10 +8,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.babar.chat.client.service.UserService;
+import com.babar.chat.dto.Contact;
 import com.babar.chat.entity.User;
 import com.babar.chat.exception.InvalidUserInfoException;
 import com.babar.chat.exception.UserNotExistException;
-import com.babar.chat.message.Contact;
 import com.babar.chat.util.Constants;
 
 import javax.servlet.http.HttpSession;

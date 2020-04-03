@@ -1,4 +1,4 @@
-package com.babar.chat.message;
+package com.babar.chat.dto;
 
 import java.util.ArrayList;
 import java.util.List;

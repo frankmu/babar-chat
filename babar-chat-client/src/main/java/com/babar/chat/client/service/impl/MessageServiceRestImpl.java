@@ -10,7 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import com.babar.chat.client.service.MessageService;
-import com.babar.chat.message.Message;
+import com.babar.chat.dto.MessageDTO;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -21,7 +21,7 @@ public class MessageServiceRestImpl implements MessageService {
 	RestTemplate restTemplate;
 
 	@Override
-	public Message sendNewMsg(long senderUid, long recipientUid, String content, int msgType) {
+	public MessageDTO sendNewMsg(long senderUid, long recipientUid, String content, int msgType) {
 		try {
 			ResponseEntity<String> response = restTemplate.postForEntity(
 					"/sendMessage?senderUid={senderUid}&recipientUid={recipientUid}&content={content}&msgType={msgType}",
@@ -37,8 +37,8 @@ public class MessageServiceRestImpl implements MessageService {
 	}
 
 	@Override
-	public List<Message> queryConversationMsg(long ownerUid, long otherUid) {
-		List<Message> list = new ArrayList<Message>();
+	public List<MessageDTO> queryConversationMsg(long ownerUid, long otherUid) {
+		List<MessageDTO> list = new ArrayList<MessageDTO>();
 		try {
 			ResponseEntity<String> response = restTemplate.getForEntity(
 					"/getConversationMessage?ownerUid={ownerUid}&otherUid={otherUid}", String.class, ownerUid, otherUid);
@@ -55,8 +55,8 @@ public class MessageServiceRestImpl implements MessageService {
 	}
 
 	@Override
-	public List<Message> queryNewerMsgFrom(long ownerUid, long otherUid, long fromMid) {		
-		List<Message> list = new ArrayList<Message>();
+	public List<MessageDTO> queryNewerMsgFrom(long ownerUid, long otherUid, long fromMid) {		
+		List<MessageDTO> list = new ArrayList<MessageDTO>();
 		try {
 			ResponseEntity<String> response = restTemplate.getForEntity(
 					"/getNewMessageFrom?ownerUid={ownerUid}&otherUid={otherUid}&fromMid={fromMid}", String.class,
@@ -80,7 +80,7 @@ public class MessageServiceRestImpl implements MessageService {
 		return totalUnread;
 	}
 
-	private Message getMessage(JsonNode root) {
+	private MessageDTO getMessage(JsonNode root) {
 		JsonNode mid = root.path("mid");
 		JsonNode content = root.path("content");
 		JsonNode ownerUid = root.path("ownerUid");
@@ -92,7 +92,7 @@ public class MessageServiceRestImpl implements MessageService {
 		JsonNode ownerName = root.path("ownerName");
 		JsonNode otherName = root.path("otherUid");
 		try {
-			return new Message(mid.asLong(), content.asText(), ownerUid.asLong(), type.asInt(), otherUid.asLong(),
+			return new MessageDTO(mid.asLong(), content.asText(), ownerUid.asLong(), type.asInt(), otherUid.asLong(),
 					new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").parse(createTime.asText()),
 					ownerUidAvatar.asText(), otherUidAvatar.asText(), ownerName.asText(), otherName.asText());
 		} catch (ParseException e) {

@@ -2,8 +2,8 @@ package com.babar.chat.client.controller;
 
 import com.babar.chat.client.service.MessageService;
 import com.babar.chat.client.service.UserService;
-import com.babar.chat.message.Contact;
-import com.babar.chat.message.Message;
+import com.babar.chat.dto.Contact;
+import com.babar.chat.dto.MessageDTO;
 import com.google.gson.Gson;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +29,7 @@ public class MessageController {
     @PostMapping(path = "/sendMsg")
     @ResponseBody
     public String sendMsg(@RequestParam Long senderUid, @RequestParam Long recipientUid, String content, Integer msgType, Model model, HttpSession session) {
-        Message messageContent = messageService.sendNewMsg(senderUid, recipientUid, content, msgType);
+        MessageDTO messageContent = messageService.sendNewMsg(senderUid, recipientUid, content, msgType);
         if (null != messageContent) {
             return new Gson().toJson(messageContent);
         } else {
@@ -40,7 +40,7 @@ public class MessageController {
     @GetMapping(path = "/queryMsg")
     @ResponseBody
     public String queryMsg(@RequestParam Long ownerUid, @RequestParam Long otherUid, Model model, HttpSession session) {
-        List<Message> messageVO = messageService.queryConversationMsg(ownerUid, otherUid);
+        List<MessageDTO> messageVO = messageService.queryConversationMsg(ownerUid, otherUid);
         if (messageVO != null) {
             return new Gson().toJson(messageVO);
         } else {
@@ -51,7 +51,7 @@ public class MessageController {
     @GetMapping(path = "/queryMsgSinceMid")
     @ResponseBody
     public String queryMsgSinceMid(@RequestParam Long ownerUid, @RequestParam Long otherUid, @RequestParam Long lastMid, Model model, HttpSession session) {
-        List<Message> messageVO = messageService.queryNewerMsgFrom(ownerUid, otherUid, lastMid);
+        List<MessageDTO> messageVO = messageService.queryNewerMsgFrom(ownerUid, otherUid, lastMid);
         if (messageVO != null) {
             return new Gson().toJson(messageVO);
         } else {
