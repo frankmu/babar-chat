@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.babar.chat.core.service.UserService;
-import com.babar.chat.dto.Contact;
+import com.babar.chat.dto.ContactDTO;
 import com.babar.chat.entity.User;
 
 import java.util.List;
@@ -33,7 +33,7 @@ public class UserController {
 
 	@GetMapping(path = "/getContactByOwnerUserId")
 	@ResponseBody
-	public Contact getContactByOwnerUserId(@RequestParam long ownerUserId) {
+	public ContactDTO getContactByOwnerUserId(@RequestParam long ownerUserId) {
 		return userService.getContactsByOwnerId(ownerUserId);
 	}
 	

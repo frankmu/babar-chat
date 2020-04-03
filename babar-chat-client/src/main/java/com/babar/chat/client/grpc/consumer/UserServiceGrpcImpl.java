@@ -72,7 +72,7 @@ public class UserServiceGrpcImpl implements UserService {
 	}
 
 	@Override
-	public com.babar.chat.dto.Contact getContacts(long ownerUserId) {
+	public com.babar.chat.dto.ContactDTO getContacts(long ownerUserId) {
 		try {
 			UserIdRequest req = UserIdRequest.newBuilder().setUid(ownerUserId).build();
 			Contact contact = userServiceBlockingStub.getContactByOwnerUserId(req);
@@ -90,7 +90,7 @@ public class UserServiceGrpcImpl implements UserService {
 								contactInfo.getMid(), contactInfo.getType(), contactInfo.getContent(),
 								contactInfo.getConvUnread(), createTime);
 					}).collect(Collectors.toList());
-			com.babar.chat.dto.Contact res = new com.babar.chat.dto.Contact(contact.getOwnerUid(),
+			com.babar.chat.dto.ContactDTO res = new com.babar.chat.dto.ContactDTO(contact.getOwnerUid(),
 					contact.getOwnerName(), contact.getOwnerAvatar(), contact.getTotalUnread());
 			res.setContactInfoList(contactInfoList);
 			return res;

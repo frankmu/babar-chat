@@ -7,9 +7,9 @@ import javax.persistence.Table;
 import java.util.Date;
 
 @Entity
-@Table(name = "IM_MSG_CONTACT")
+@Table(name = "CONTACT")
 @IdClass(ContactMultiKeys.class)
-public class MessageContact {
+public class Contact {
     @Id
     private Long ownerUid;
     @Id

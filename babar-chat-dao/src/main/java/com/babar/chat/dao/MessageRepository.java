@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository;
 import com.babar.chat.entity.Message;
 
 @Repository
-public interface MessageContentRepository extends JpaRepository<Message, Long> {
+public interface MessageRepository extends JpaRepository<Message, Long> {
 
 }

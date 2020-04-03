@@ -94,7 +94,7 @@ public class MessageServiceImplGrpc extends MessageServiceImplBase {
 	
 	@Override
 	public void getContacts(UserIdRequest req, StreamObserver<Contact> responseObserver) {
-		com.babar.chat.dto.Contact contact = messageService.queryContacts(req.getUid());
+		com.babar.chat.dto.ContactDTO contact = messageService.queryContacts(req.getUid());
 		List<ContactInfo> contactInfoList = contact.getContactInfoList().stream().map(contactInfo -> {
 			return ContactInfo.newBuilder()
 					.setOtherUid(contactInfo.getOtherUid())

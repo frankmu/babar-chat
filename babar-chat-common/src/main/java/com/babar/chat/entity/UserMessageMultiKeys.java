@@ -2,7 +2,7 @@ package com.babar.chat.entity;
 
 import java.io.Serializable;
 
-public class RelationMultiKeys implements Serializable {
+public class UserMessageMultiKeys implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	

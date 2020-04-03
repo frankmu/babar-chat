@@ -2,7 +2,7 @@ package com.babar.chat.core.service;
 
 import java.util.List;
 
-import com.babar.chat.dto.Contact;
+import com.babar.chat.dto.ContactDTO;
 import com.babar.chat.entity.User;
 
 public interface UserService {
@@ -13,9 +13,9 @@ public interface UserService {
 
     List<User> getAllUsersExcept(User exceptUser);
 
-    Contact getContacts(User ownerUser);
+    ContactDTO getContacts(User ownerUser);
     
-    Contact getContactsByOwnerId(long ownerUserId);
+    ContactDTO getContactsByOwnerId(long ownerUserId);
     
     List<User> getAllUsers();
 }

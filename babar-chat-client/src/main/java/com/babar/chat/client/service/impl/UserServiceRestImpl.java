@@ -10,7 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import com.babar.chat.client.service.UserService;
-import com.babar.chat.dto.Contact;
+import com.babar.chat.dto.ContactDTO;
 import com.babar.chat.dto.ContactInfo;
 import com.babar.chat.entity.User;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -38,7 +38,7 @@ public class UserServiceRestImpl implements UserService {
 	}
 
 	@Override
-	public Contact getContacts(long ownerUserId) {
+	public ContactDTO getContacts(long ownerUserId) {
 		try {
 			ResponseEntity<String> response = restTemplate.getForEntity("/getContactByOwnerUserId?ownerUserId={ownerUserId}",
 					String.class, ownerUserId);
@@ -50,7 +50,7 @@ public class UserServiceRestImpl implements UserService {
 			JsonNode totalUnread = root.path("totalUnread");
 			JsonNode contactInfoList = root.path("contactInfoList");
 
-			Contact contact = new Contact(ownerUid.asLong(), ownerName.asText(), ownerAvatar.asText(),
+			ContactDTO contact = new ContactDTO(ownerUid.asLong(), ownerName.asText(), ownerAvatar.asText(),
 					totalUnread.asLong());
 			for (JsonNode node : contactInfoList) {
 				ContactInfo contactInfo = new ContactInfo(node.path("otherUid").asLong(),

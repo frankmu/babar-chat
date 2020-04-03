@@ -2,7 +2,7 @@ package com.babar.chat.client.controller;
 
 import com.babar.chat.client.service.MessageService;
 import com.babar.chat.client.service.UserService;
-import com.babar.chat.dto.Contact;
+import com.babar.chat.dto.ContactDTO;
 import com.babar.chat.dto.MessageDTO;
 import com.google.gson.Gson;
 
@@ -62,7 +62,7 @@ public class MessageController {
     @GetMapping(path = "/queryContacts")
     @ResponseBody
     public String queryContacts(@RequestParam Long ownerUid, Model model, HttpSession session) {
-        Contact contactVO = userService.getContacts(ownerUid);
+        ContactDTO contactVO = userService.getContacts(ownerUid);
         if (contactVO != null) {
             return new Gson().toJson(contactVO);
         } else {

@@ -8,12 +8,12 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.babar.chat.core.service.UserService;
-import com.babar.chat.dao.MessageContactRepository;
-import com.babar.chat.dao.MessageContentRepository;
+import com.babar.chat.dao.ContactRepository;
+import com.babar.chat.dao.MessageRepository;
 import com.babar.chat.dao.UserRepository;
-import com.babar.chat.dto.Contact;
+import com.babar.chat.dto.ContactDTO;
 import com.babar.chat.dto.ContactInfo;
-import com.babar.chat.entity.MessageContact;
+import com.babar.chat.entity.Contact;
 import com.babar.chat.entity.Message;
 import com.babar.chat.entity.User;
 import com.babar.chat.exception.InvalidUserInfoException;
@@ -30,13 +30,13 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserRepository userRepository;
     @Autowired
-    private MessageContactRepository contactRepository;
+    private ContactRepository contactRepository;
 
     @Autowired
     private RedisTemplate redisTemplate;
 
     @Autowired
-    private MessageContentRepository contentRepository;
+    private MessageRepository contentRepository;
 
     @Override
     public User login(String email, String password) {
@@ -72,8 +72,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Contact getContacts(User ownerUser) {
-        List<MessageContact> contacts = contactRepository.findMessageContactsByOwnerUidOrderByMidDesc(ownerUser.getUid());
+    public ContactDTO getContacts(User ownerUser) {
+        List<Contact> contacts = contactRepository.findContactsByOwnerUidOrderByMidDesc(ownerUser.getUid());
         if (contacts != null) {
             long totalUnread = 0;
             Object totalUnreadObj = redisTemplate.opsForValue().get(ownerUser.getUid() + "_T");
@@ -81,7 +81,7 @@ public class UserServiceImpl implements UserService {
                 totalUnread = Long.parseLong((String) totalUnreadObj);
             }
 
-            final Contact contactVO = new Contact(ownerUser.getUid(), ownerUser.getUsername(), ownerUser.getAvatar(), totalUnread);
+            final ContactDTO contactVO = new ContactDTO(ownerUser.getUid(), ownerUser.getUsername(), ownerUser.getAvatar(), totalUnread);
             contacts.stream().forEach(contact -> {
                 Long mid = contact.getMid();
                 Optional<Message> contentVO = contentRepository.findById(mid);
@@ -110,7 +110,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	@Transactional
-	public Contact getContactsByOwnerId(long ownerUserId) {
+	public ContactDTO getContactsByOwnerId(long ownerUserId) {
 		return getContacts(userRepository.getOne(ownerUserId));
 	}
 }

@@ -4,9 +4,9 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name = "IM_MSG_RELATION")
-@IdClass(RelationMultiKeys.class)
-public class MessageRelation {
+@Table(name = "USER_MESSAGE")
+@IdClass(UserMessageMultiKeys.class)
+public class UserMessage {
 
     @Id
     private Long mid;

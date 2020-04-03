@@ -1,7 +1,7 @@
 package com.babar.chat.core.controller;
 
 import com.babar.chat.core.service.MessageService;
-import com.babar.chat.dto.Contact;
+import com.babar.chat.dto.ContactDTO;
 import com.babar.chat.dto.MessageDTO;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +39,7 @@ public class MessageController {
 
 	@GetMapping(path = "/getContacts")
 	@ResponseBody
-	public Contact getContacts(@RequestParam long ownerUid) {
+	public ContactDTO getContacts(@RequestParam long ownerUid) {
 		return messageService.queryContacts(ownerUid);
 	}
 

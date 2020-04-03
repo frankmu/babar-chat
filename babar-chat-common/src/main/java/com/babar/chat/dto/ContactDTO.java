@@ -3,14 +3,14 @@ package com.babar.chat.dto;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Contact {
+public class ContactDTO {
     private Long ownerUid;
     private String ownerAvatar;
     private String ownerName;
     private Long totalUnread;
     private List<ContactInfo> contactInfoList;
 
-    public Contact(Long ownerUid, String ownerName, String ownerAvatar, Long totalUnread) {
+    public ContactDTO(Long ownerUid, String ownerName, String ownerAvatar, Long totalUnread) {
         this.ownerUid = ownerUid;
         this.ownerAvatar = ownerAvatar;
         this.ownerName = ownerName;

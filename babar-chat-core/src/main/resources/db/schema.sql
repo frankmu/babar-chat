@@ -11,7 +11,6 @@ CREATE TABLE USER (
   avatar VARCHAR(500) NOT NULL
 );
 
-
 CREATE TABLE MESSAGE (
   mid INT AUTO_INCREMENT  PRIMARY KEY,
   content VARCHAR(1000) NOT NULL,
@@ -21,7 +20,7 @@ CREATE TABLE MESSAGE (
   create_time TIMESTAMP NOT NUll
 );
 
-CREATE TABLE IM_MSG_RELATION (
+CREATE TABLE USER_MESSAGE (
   owner_uid INT NOT NULL,
   other_uid INT NOT NULL,
   mid INT NOT NULL,
@@ -29,9 +28,9 @@ CREATE TABLE IM_MSG_RELATION (
   create_time TIMESTAMP NOT NULL,
   PRIMARY KEY (`owner_uid`,`mid`)
 );
-CREATE INDEX `idx_owneruid_otheruid_msgid` ON IM_MSG_RELATION(`owner_uid`,`other_uid`,`mid`);
+CREATE INDEX `idx_owneruid_otheruid_msgid` ON USER_MESSAGE(`owner_uid`,`other_uid`,`mid`);
 
-CREATE TABLE IM_MSG_CONTACT (
+CREATE TABLE CONTACT (
   owner_uid INT NOT NULL,
   other_uid INT NOT NULL,
   mid INT NOT NULL,

@@ -59,7 +59,7 @@ public class UserServiceImplGrpc extends UserServiceImplBase {
 	
 	@Override
 	public void getContactByOwnerUserId(UserIdRequest req, StreamObserver<Contact> responseObserver) {
-		com.babar.chat.dto.Contact contact = userService.getContactsByOwnerId(req.getUid());
+		com.babar.chat.dto.ContactDTO contact = userService.getContactsByOwnerId(req.getUid());
 		List<ContactInfo> contactInfoList = contact.getContactInfoList().stream().map(contactInfo -> {
 			return ContactInfo.newBuilder()
 					.setOtherUid(contactInfo.getOtherUid())

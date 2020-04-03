@@ -1,17 +1,17 @@
 package com.babar.chat.core.service.impl;
 
 import com.babar.chat.core.service.MessageService;
-import com.babar.chat.dao.MessageContactRepository;
-import com.babar.chat.dao.MessageContentRepository;
-import com.babar.chat.dao.MessageRelationRepository;
+import com.babar.chat.dao.ContactRepository;
+import com.babar.chat.dao.MessageRepository;
+import com.babar.chat.dao.UserMessageRepository;
 import com.babar.chat.dao.UserRepository;
-import com.babar.chat.dto.Contact;
+import com.babar.chat.dto.ContactDTO;
 import com.babar.chat.dto.ContactInfo;
 import com.babar.chat.dto.MessageDTO;
 import com.babar.chat.entity.ContactMultiKeys;
-import com.babar.chat.entity.MessageContact;
+import com.babar.chat.entity.Contact;
 import com.babar.chat.entity.Message;
-import com.babar.chat.entity.MessageRelation;
+import com.babar.chat.entity.UserMessage;
 import com.babar.chat.entity.User;
 import com.babar.chat.util.Constants;
 import com.google.common.collect.Lists;
@@ -29,11 +29,11 @@ import java.util.List;
 public class MessageServiceImpl implements MessageService {
 
     @Autowired
-    private MessageContentRepository contentRepository;
+    private MessageRepository contentRepository;
     @Autowired
-    private MessageRelationRepository relationRepository;
+    private UserMessageRepository relationRepository;
     @Autowired
-    private MessageContactRepository contactRepository;
+    private ContactRepository contactRepository;
     @Autowired
     private UserRepository userRepository;
     @Autowired
@@ -53,7 +53,7 @@ public class MessageServiceImpl implements MessageService {
         Long mid = messageContent.getMid();
 
         // Save sender's outbox
-        MessageRelation messageRelationSender = new MessageRelation();
+        UserMessage messageRelationSender = new UserMessage();
         messageRelationSender.setMid(mid);
         messageRelationSender.setOwnerUid(senderUid);
         messageRelationSender.setOtherUid(recipientUid);
@@ -62,7 +62,7 @@ public class MessageServiceImpl implements MessageService {
         relationRepository.save(messageRelationSender);
 
         // Save recipient's inbox
-        MessageRelation messageRelationRecipient = new MessageRelation();
+        UserMessage messageRelationRecipient = new UserMessage();
         messageRelationRecipient.setMid(mid);
         messageRelationRecipient.setOwnerUid(recipientUid);
         messageRelationRecipient.setOtherUid(senderUid);
@@ -71,11 +71,11 @@ public class MessageServiceImpl implements MessageService {
         relationRepository.save(messageRelationRecipient);
 
         // Update recent contact
-        MessageContact messageContactSender = contactRepository.findById(new ContactMultiKeys(senderUid, recipientUid)).get();
+        Contact messageContactSender = contactRepository.findById(new ContactMultiKeys(senderUid, recipientUid)).get();
         if (messageContactSender != null) {
             messageContactSender.setMid(mid);
         } else {
-            messageContactSender = new MessageContact();
+            messageContactSender = new Contact();
             messageContactSender.setOwnerUid(senderUid);
             messageContactSender.setOtherUid(recipientUid);
             messageContactSender.setMid(mid);
@@ -85,11 +85,11 @@ public class MessageServiceImpl implements MessageService {
         contactRepository.save(messageContactSender);
 
         // Update recipient's recent contact
-        MessageContact messageContactRecipient = contactRepository.findById(new ContactMultiKeys(recipientUid, senderUid)).get();
+        Contact messageContactRecipient = contactRepository.findById(new ContactMultiKeys(recipientUid, senderUid)).get();
         if (messageContactRecipient != null) {
             messageContactRecipient.setMid(mid);
         } else {
-            messageContactRecipient = new MessageContact();
+            messageContactRecipient = new Contact();
             messageContactRecipient.setOwnerUid(recipientUid);
             messageContactRecipient.setOtherUid(senderUid);
             messageContactRecipient.setMid(mid);
@@ -113,17 +113,17 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     public List<MessageDTO> queryConversationMsg(long ownerUid, long otherUid) {
-        List<MessageRelation> relationList = relationRepository.findAllByOwnerUidAndOtherUidOrderByMidAsc(ownerUid, otherUid);
+        List<UserMessage> relationList = relationRepository.findAllByOwnerUidAndOtherUidOrderByMidAsc(ownerUid, otherUid);
         return composeMessageVO(relationList, ownerUid, otherUid);
     }
 
     @Override
     public List<MessageDTO> queryNewerMsgFrom(long ownerUid, long otherUid, long fromMid) {
-        List<MessageRelation> relationList = relationRepository.findAllByOwnerUidAndOtherUidAndMidIsGreaterThanOrderByMidAsc(ownerUid, otherUid, fromMid);
+        List<UserMessage> relationList = relationRepository.findAllByOwnerUidAndOtherUidAndMidIsGreaterThanOrderByMidAsc(ownerUid, otherUid, fromMid);
         return composeMessageVO(relationList, ownerUid, otherUid);
     }
 
-    private List<MessageDTO> composeMessageVO(List<MessageRelation> relationList, long ownerUid, long otherUid) {
+    private List<MessageDTO> composeMessageVO(List<UserMessage> relationList, long ownerUid, long otherUid) {
         if (null != relationList && !relationList.isEmpty()) {
         		// Compose message index and content
             List<MessageDTO> msgList = Lists.newArrayList();
@@ -156,8 +156,8 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    public Contact queryContacts(long ownerUid) {
-        List<MessageContact> contacts = contactRepository.findMessageContactsByOwnerUidOrderByMidDesc(ownerUid);
+    public ContactDTO queryContacts(long ownerUid) {
+        List<Contact> contacts = contactRepository.findContactsByOwnerUidOrderByMidDesc(ownerUid);
         if (contacts != null) {
             User user = userRepository.findById(ownerUid).get();
             long totalUnread = 0;
@@ -166,7 +166,7 @@ public class MessageServiceImpl implements MessageService {
                 totalUnread = Long.parseLong((String) totalUnreadObj);
             }
 
-            Contact contactVO = new Contact(user.getUid(), user.getUsername(), user.getAvatar(), totalUnread);
+            ContactDTO contactVO = new ContactDTO(user.getUid(), user.getUsername(), user.getAvatar(), totalUnread);
             contacts.stream().forEach(contact -> {
                 Long mid = contact.getMid();
                 Message contentVO = contentRepository.findById(mid).get();
