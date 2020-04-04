@@ -1,7 +1,10 @@
 package com.babar.chat.exception;
 
 public class InvalidUserInfoException extends RuntimeException {
-    public InvalidUserInfoException(String message) {
+
+	private static final long serialVersionUID = 1L;
+
+	public InvalidUserInfoException(String message) {
         super(message);
     }
 }

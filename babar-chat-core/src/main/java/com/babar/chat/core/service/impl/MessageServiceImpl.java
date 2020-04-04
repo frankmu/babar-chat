@@ -165,8 +165,8 @@ public class MessageServiceImpl implements MessageService {
             if (null != totalUnreadObj) {
                 totalUnread = Long.parseLong((String) totalUnreadObj);
             }
-
-            UserDTO contactVO = new UserDTO(user.getUid(), user.getUsername(), user.getAvatar(), totalUnread);
+            
+            List<ContactDTO> contactDTOs = new ArrayList<>();
             contacts.stream().forEach(contact -> {
                 Long mid = contact.getMid();
                 Message contentVO = contentRepository.findById(mid).get();
@@ -179,9 +179,11 @@ public class MessageServiceImpl implements MessageService {
                         convUnread = Long.parseLong((String) convUnreadObj);
                     }
                     ContactDTO contactInfo = new ContactDTO(otherUser.getUid(), otherUser.getUsername(), otherUser.getAvatar(), mid, contact.getType(), contentVO.getContent(), convUnread, contact.getCreateTime());
-                    contactVO.appendContact(contactInfo);
+                    contactDTOs.add(contactInfo);
                 }
             });
+            UserDTO contactVO = new UserDTO(user.getUid(), user.getUsername(), user.getAvatar(), totalUnread, contactDTOs);
+            
             return contactVO;
         }
         return null;

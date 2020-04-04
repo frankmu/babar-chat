@@ -91,8 +91,7 @@ public class UserServiceGrpcImpl implements UserService {
 								contactInfo.getConvUnread(), createTime);
 					}).collect(Collectors.toList());
 			com.babar.chat.dto.UserDTO res = new com.babar.chat.dto.UserDTO(contact.getOwnerUid(),
-					contact.getOwnerName(), contact.getOwnerAvatar(), contact.getTotalUnread());
-			res.setContactInfoList(contactInfoList);
+					contact.getOwnerName(), contact.getOwnerAvatar(), contact.getTotalUnread(), contactInfoList);
 			return res;
 
 		} catch (StatusRuntimeException e) {

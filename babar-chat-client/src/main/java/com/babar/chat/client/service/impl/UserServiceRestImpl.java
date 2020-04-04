@@ -2,6 +2,7 @@ package com.babar.chat.client.service.impl;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -50,16 +51,16 @@ public class UserServiceRestImpl implements UserService {
 			JsonNode totalUnread = root.path("totalUnread");
 			JsonNode contactInfoList = root.path("contactInfoList");
 
-			UserDTO contact = new UserDTO(ownerUid.asLong(), ownerName.asText(), ownerAvatar.asText(),
-					totalUnread.asLong());
+			List<com.babar.chat.dto.ContactDTO> contacts = new ArrayList<>();
 			for (JsonNode node : contactInfoList) {
 				ContactDTO contactInfo = new ContactDTO(node.path("otherUid").asLong(),
 						node.path("otherName").asText(), node.path("otherAvatar").asText(), node.path("mid").asLong(),
 						node.path("type").asInt(), node.path("content").asText(), node.path("convUnread").asLong(),
 						new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").parse(node.path("createTime").asText()));
-				contact.appendContact(contactInfo);
+				contacts.add(contactInfo);
 			}
-
+			UserDTO contact = new UserDTO(ownerUid.asLong(), ownerName.asText(), ownerAvatar.asText(),
+					totalUnread.asLong(), contacts);
 			return contact;
 		} catch (JsonMappingException e) {
 			e.printStackTrace();

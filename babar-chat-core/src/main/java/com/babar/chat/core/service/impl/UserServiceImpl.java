@@ -19,6 +19,7 @@ import com.babar.chat.entity.User;
 import com.babar.chat.exception.InvalidUserInfoException;
 import com.babar.chat.exception.UserNotExistException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -81,7 +82,7 @@ public class UserServiceImpl implements UserService {
                 totalUnread = Long.parseLong((String) totalUnreadObj);
             }
 
-            final UserDTO contactVO = new UserDTO(ownerUser.getUid(), ownerUser.getUsername(), ownerUser.getAvatar(), totalUnread);
+            List<ContactDTO> contactDTOs = new ArrayList<>();
             contacts.stream().forEach(contact -> {
                 Long mid = contact.getMid();
                 Optional<Message> contentVO = contentRepository.findById(mid);
@@ -94,9 +95,11 @@ public class UserServiceImpl implements UserService {
                         convUnread = Long.parseLong((String) convUnreadObj);
                     }
                     ContactDTO contactInfo = new ContactDTO(otherUser.get().getUid(), otherUser.get().getUsername(), otherUser.get().getAvatar(), mid, contact.getType(), contentVO.get().getContent(), convUnread, contact.getCreateTime());
-                    contactVO.appendContact(contactInfo);
+                    contactDTOs.add(contactInfo);
                 }
             });
+            final UserDTO contactVO = new UserDTO(ownerUser.getUid(), ownerUser.getUsername(), ownerUser.getAvatar(), totalUnread, contactDTOs);
+            
             return contactVO;
         }
         return null;
