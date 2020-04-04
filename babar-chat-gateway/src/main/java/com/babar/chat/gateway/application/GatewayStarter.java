@@ -6,8 +6,8 @@ import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
 @ComponentScan({ "com.babar.chat.gateway" })
-public class GatewayApplication {
+public class GatewayStarter {
 	public static void main(String[] args) {
-		new SpringApplicationBuilder(GatewayApplication.class).logStartupInfo(false).run(args);
+		new SpringApplicationBuilder(GatewayStarter.class).logStartupInfo(false).run(args);
 	}
 }

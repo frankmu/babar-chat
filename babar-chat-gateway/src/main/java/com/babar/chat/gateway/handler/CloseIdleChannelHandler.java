@@ -5,16 +5,15 @@ import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @ChannelHandler.Sharable
 @Component
 public class CloseIdleChannelHandler extends ChannelDuplexHandler {
-
-    private static final Logger logger = LoggerFactory.getLogger(CloseIdleChannelHandler.class);
 
     @Autowired
     private WebsocketRouterHandler websocketRouterHandler;
@@ -25,7 +24,7 @@ public class CloseIdleChannelHandler extends ChannelDuplexHandler {
         if (evt instanceof IdleStateEvent) {
             IdleStateEvent event = (IdleStateEvent) evt;
             if (event.state() == IdleState.ALL_IDLE) {
-                logger.info("connector no receive ping packet from client,will close.,channel:{}", ctx.channel());
+                log.info("Connector not receiving ping packet from client, will close channel:{}", ctx.channel());
                 websocketRouterHandler.cleanUserChannel(ctx.channel());
                 ctx.close();
             }

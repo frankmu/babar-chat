@@ -43,7 +43,7 @@ public class SpringSessionRedisConfiguration {
     public RedisTemplate<Object, Object> redisTemplate() {
         RedisTemplate<Object, Object> redisTemplate = new RedisTemplate<Object, Object>();
         redisTemplate.setConnectionFactory(redisConnectionFactory());
-        GenericToStringSerializer genericToStringSerializer = new GenericToStringSerializer(Object.class);
+        GenericToStringSerializer<String> genericToStringSerializer = new GenericToStringSerializer<>(String.class);
 
         redisTemplate.setValueSerializer(genericToStringSerializer);
         redisTemplate.setKeySerializer(new StringRedisSerializer());

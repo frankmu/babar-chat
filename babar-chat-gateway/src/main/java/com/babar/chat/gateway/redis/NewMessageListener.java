@@ -5,8 +5,8 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.connection.Message;
 import org.springframework.data.redis.connection.MessageListener;
@@ -15,23 +15,21 @@ import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Component
 public class NewMessageListener implements MessageListener {
-
-    private static final Logger logger = LoggerFactory.getLogger(NewMessageListener.class);
 
     @Autowired
     private WebsocketRouterHandler websocketRouterHandler;
 
-    StringRedisSerializer stringRedisSerializer = new StringRedisSerializer();
-    private static final RedisSerializer<String> valueSerializer = new GenericToStringSerializer(Object.class);
-
+    private static final StringRedisSerializer stringRedisSerializer = new StringRedisSerializer();
+    private static final RedisSerializer<String> valueSerializer = new GenericToStringSerializer<String>(String.class);
 
     @Override
     public void onMessage(Message message, byte[] pattern) {
         String topic = stringRedisSerializer.deserialize(message.getChannel());
         String jsonMsg = valueSerializer.deserialize(message.getBody());
-        logger.info("Message Received --> pattern: {}，topic:{}，message: {}", new String(pattern), topic, jsonMsg);
+        log.info("Message Received --> pattern: {}，topic:{}，message: {}", new String(pattern), topic, jsonMsg);
         JsonObject msgJson = JsonParser.parseString(jsonMsg).getAsJsonObject();
         long otherUid = msgJson.get("otherUid").getAsLong();
         JsonObject pushJson = new JsonObject();

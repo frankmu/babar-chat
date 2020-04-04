@@ -20,8 +20,8 @@ import io.netty.handler.timeout.IdleStateHandler;
 import io.netty.util.concurrent.DefaultEventExecutorGroup;
 import io.netty.util.concurrent.DefaultThreadFactory;
 import io.netty.util.concurrent.EventExecutorGroup;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -32,137 +32,118 @@ import com.babar.chat.gateway.util.EnhancedThreadFactory;
 import javax.annotation.PostConstruct;
 import java.util.concurrent.TimeUnit;
 
+@Slf4j
 @Component
 public class WebSocketServer {
 
-    private static final Logger log = LoggerFactory.getLogger(WebSocketServer.class);
+	@Autowired
+	private WebSocketConfig serverConfig;
 
-    @Autowired
-    private ServerConfig serverConfig;
+	@Autowired
+	private WebsocketRouterHandler websocketRouterHandler;
 
-    private ServerBootstrap bootstrap;
-    private ChannelFuture channelFuture;
+	@Autowired
+	private CloseIdleChannelHandler closeIdleChannelHandler;
 
+	private ServerBootstrap bootstrap;
+	private ChannelFuture channelFuture;
 
-    private EventExecutorGroup eventExecutorGroup;
+	@PostConstruct
+	public void start() throws InterruptedException {
+		if (serverConfig.port == 0) {
+			log.info("WebSocket Server not config.");
+			return;
+		}
 
-    @Autowired
-    private WebsocketRouterHandler websocketRouterHandler;
+		log.info("WebSocket Server is starting");
+		EventExecutorGroup eventExecutorGroup = new DefaultEventExecutorGroup(serverConfig.handlerThreads,
+				new EnhancedThreadFactory("WebSocketThreadPool"));
 
-    @Autowired
-    private CloseIdleChannelHandler closeIdleChannelHandler;
+		ChannelInitializer<SocketChannel> initializer = new ChannelInitializer<SocketChannel>() {
+			@Override
+			protected void initChannel(SocketChannel ch) throws Exception {
+				ChannelPipeline pipeline = ch.pipeline();
+				// Add websocket related codec and protocol
+				pipeline.addLast(new HttpServerCodec());
+				pipeline.addLast(new HttpObjectAggregator(65536));
+				pipeline.addLast(new LoggingHandler(LogLevel.DEBUG));
+				pipeline.addLast(new WebSocketServerProtocolHandler("/", null, true));
+				// Add application logic handler with a customized thread pool
+				pipeline.addLast(eventExecutorGroup, websocketRouterHandler);
+				// Add the idel processor
+				pipeline.addLast(new IdleStateHandler(0, 0, serverConfig.allIdleSecond));
+				pipeline.addLast(closeIdleChannelHandler);
+			}
+		};
 
-    @PostConstruct
-    public void start() throws InterruptedException {
-        if (serverConfig.port == 0) {
-            log.info("WebSocket Server not config.");
-            return;
-        }
+		bootstrap = newServerBootstrap();
+		bootstrap.childHandler(initializer);
+		channelFuture = bootstrap.bind(serverConfig.port).sync();
 
-        log.info("WebSocket Server is starting");
-        eventExecutorGroup =
-                new DefaultEventExecutorGroup(serverConfig.userThreads, new EnhancedThreadFactory("WebSocketBizThreadPool"));
+		Runtime.getRuntime().addShutdownHook(new ShutdownThread());
 
-        ChannelInitializer<SocketChannel> initializer = new ChannelInitializer<SocketChannel>() {
+		log.info("WebSocket Server start successfully on: " + serverConfig.port);
 
-            @Override
-            protected void initChannel(SocketChannel ch) throws Exception {
-                ChannelPipeline pipeline = ch.pipeline();
-                // Add websocket related codec and protocol
-                pipeline.addLast(new HttpServerCodec());
-                pipeline.addLast(new HttpObjectAggregator(65536));
-                pipeline.addLast(new LoggingHandler(LogLevel.DEBUG));
-                pipeline.addLast(new WebSocketServerProtocolHandler("/", null, true));
-                // Add application logic handler
-                pipeline.addLast(websocketRouterHandler);
-                // Add the idel processor
-                pipeline.addLast(new IdleStateHandler(0, 0, serverConfig.allIdleSecond));
-                pipeline.addLast(closeIdleChannelHandler);
+		new Thread() {
+			@Override
+			public void run() {
+				try {
+					channelFuture.channel().closeFuture().sync();
+				} catch (Exception e) {
+					log.error("WebSocket Server start failed!", e);
+				}
+			}
+		}.start();
+	}
 
-            }
+	class ShutdownThread extends Thread {
+		@Override
+		public void run() {
+			close();
+		}
+	}
 
-        };
+	public void close() {
+		if (bootstrap == null) {
+			log.info("WebSocket server is not running!");
+			return;
+		}
 
-        bootstrap = newServerBootstrap();
-        bootstrap.childHandler(initializer);
+		log.info("WebSocket server is stopping");
+		if (channelFuture != null) {
+			channelFuture.channel().close().awaitUninterruptibly(10, TimeUnit.SECONDS);
+			channelFuture = null;
+		}
+		if (bootstrap != null && bootstrap.config().group() != null) {
+			bootstrap.config().group().shutdownGracefully();
+		}
+		if (bootstrap != null && bootstrap.config().childGroup() != null) {
+			bootstrap.config().childGroup().shutdownGracefully();
+		}
+		bootstrap = null;
 
-        channelFuture = bootstrap.bind(serverConfig.port).sync();
+		log.info("WebSocket server stopped");
+	}
 
-        Runtime.getRuntime().addShutdownHook(new ShutdownThread());
-
-        log.info("WebSocket Server start succ on:" + serverConfig.port);
-
-        new Thread() {
-
-            @Override
-            public void run() {
-                try {
-                    channelFuture.channel().closeFuture().sync();
-                } catch (Exception e) {
-                    log.error("WebSocket Server start failed!", e);
-                }
-            }
-
-        }.start();
-    }
-
-
-    class ShutdownThread extends Thread {
-        @Override
-        public void run() {
-            close();
-        }
-    }
-
-    public void close() {
-        if (bootstrap == null) {
-            log.info("WebSocket server is not running!");
-            return;
-        }
-
-        log.info("WebSocket server is stopping");
-        if (channelFuture != null) {
-            channelFuture.channel().close().awaitUninterruptibly(10, TimeUnit.SECONDS);
-            channelFuture = null;
-        }
-        if (bootstrap != null && bootstrap.config().group() != null) {
-            bootstrap.config().group().shutdownGracefully();
-        }
-        if (bootstrap != null && bootstrap.config().childGroup() != null) {
-            bootstrap.config().childGroup().shutdownGracefully();
-        }
-        bootstrap = null;
-
-        log.info("WebSocket server stopped");
-    }
-
-    /**
-     * Use EpollEventLoopGroup if epoll is supported
-     * @return
-     */
-    public ServerBootstrap newServerBootstrap() {
-        if (Epoll.isAvailable() && serverConfig.useEpoll) {
-            EventLoopGroup bossGroup =
-                    new EpollEventLoopGroup(serverConfig.bossThreads, new DefaultThreadFactory("WebSocketBossGroup", true));
-            EventLoopGroup workerGroup =
-                    new EpollEventLoopGroup(serverConfig.workerThreads, new DefaultThreadFactory("WebSocketWorkerGroup", true));
-            return new ServerBootstrap().group(bossGroup, workerGroup).channel(EpollServerSocketChannel.class);
-        }
-
-        return newNioServerBootstrap(serverConfig.bossThreads, serverConfig.workerThreads);
-    }
-
-    private ServerBootstrap newNioServerBootstrap(int bossThreads, int workerThreads) {
-        EventLoopGroup bossGroup;
-        EventLoopGroup workerGroup;
-        if (bossThreads >= 0 && workerThreads >= 0) {
-            bossGroup = new NioEventLoopGroup(bossThreads);
-            workerGroup = new NioEventLoopGroup(workerThreads);
-        } else {
-            bossGroup = new NioEventLoopGroup();
-            workerGroup = new NioEventLoopGroup();
-        }
-
-        return new ServerBootstrap().group(bossGroup, workerGroup).channel(NioServerSocketChannel.class);
-    }
+	// Use EpollEventLoopGroup if epoll is supported, else use NioServerSocketChannel
+	private ServerBootstrap newServerBootstrap() {
+		if (Epoll.isAvailable() && serverConfig.useEpoll) {
+			EventLoopGroup bossGroup = new EpollEventLoopGroup(serverConfig.bossThreads,
+					new DefaultThreadFactory("WebSocketBossGroup", true));
+			EventLoopGroup workerGroup = new EpollEventLoopGroup(serverConfig.workerThreads,
+					new DefaultThreadFactory("WebSocketWorkerGroup", true));
+			return new ServerBootstrap().group(bossGroup, workerGroup).channel(EpollServerSocketChannel.class);
+		} else {
+			EventLoopGroup bossGroup;
+			EventLoopGroup workerGroup;
+			if (serverConfig.bossThreads >= 0 && serverConfig.workerThreads >= 0) {
+				bossGroup = new NioEventLoopGroup(serverConfig.bossThreads);
+				workerGroup = new NioEventLoopGroup(serverConfig.workerThreads);
+			} else {
+				bossGroup = new NioEventLoopGroup();
+				workerGroup = new NioEventLoopGroup();
+			}
+			return new ServerBootstrap().group(bossGroup, workerGroup).channel(NioServerSocketChannel.class);
+		}
+	}
 }

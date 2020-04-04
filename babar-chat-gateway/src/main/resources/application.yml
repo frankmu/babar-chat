@@ -26,6 +26,7 @@ babar:
             useDirectBuffer: true
             useEpoll: true
             useMemPool: true
-            userThreads: 50
-            workerThreads: 0
+            handlerThreads: 2
+            workerThreads: 1
+            ackThreads: 1
             idleTimes: 5

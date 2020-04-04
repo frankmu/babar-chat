@@ -2,7 +2,6 @@ package com.babar.chat.gateway.handler;
 
 import com.babar.chat.dto.MessageDTO;
 import com.babar.chat.gateway.service.MessageService;
-import com.babar.chat.gateway.util.EnhancedThreadFactory;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -15,31 +14,34 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketFrame;
 import io.netty.util.AttributeKey;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
+@Slf4j
 @ChannelHandler.Sharable
 @Component
 public class WebsocketRouterHandler extends SimpleChannelInboundHandler<WebSocketFrame> {
-	private static final ConcurrentHashMap<Long, Channel> userChannel = new ConcurrentHashMap<>(15000);
-	private static final ConcurrentHashMap<Channel, Long> channelUser = new ConcurrentHashMap<>(15000);
-	private ScheduledExecutorService executorService = new ScheduledThreadPoolExecutor(50,
-			new EnhancedThreadFactory("ackCheckingThreadPool"));
-	private static final Logger logger = LoggerFactory.getLogger(WebsocketRouterHandler.class);
-	private static final AttributeKey<AtomicLong> TID_GENERATOR = AttributeKey.valueOf("tid_generator");
-	private static final AttributeKey<ConcurrentHashMap> NON_ACKED_MAP = AttributeKey.valueOf("non_acked_map");
 
 	@Autowired
 	private MessageService messageService;
+	
+	@Autowired
+	ScheduledExecutorService scheduledExecutorService;
+	
+	// Lookup table for user <-> channel
+	private static final ConcurrentHashMap<Long, Channel> userChannel = new ConcurrentHashMap<>(15000);
+	private static final ConcurrentHashMap<Channel, Long> channelUser = new ConcurrentHashMap<>(15000);
+	
+	private static final AttributeKey<AtomicLong> TID_GENERATOR = AttributeKey.valueOf("tid_generator");
+	private static final AttributeKey<ConcurrentHashMap<Long, JsonObject>> NON_ACKED_MAP = AttributeKey.valueOf("non_acked_map");
 
 	@Override
 	protected void channelRead0(ChannelHandlerContext ctx, WebSocketFrame frame) throws Exception {
@@ -52,7 +54,7 @@ public class WebsocketRouterHandler extends SimpleChannelInboundHandler<WebSocke
 			case 0:// Heart beat
 				long uid = data.get("uid").getAsLong();
 				long timeout = data.get("timeout").getAsLong();
-				logger.info("[heartbeat]: uid = {} , current timeout is {} ms, channel = {}", uid, timeout,
+				log.info("[heartbeat]: uid = {} , current timeout is {} ms, channel = {}", uid, timeout,
 						ctx.channel());
 				ctx.writeAndFlush(new TextWebSocketFrame("{\"type\":0,\"timeout\":" + timeout + "}"));
 				break;
@@ -62,7 +64,7 @@ public class WebsocketRouterHandler extends SimpleChannelInboundHandler<WebSocke
 				channelUser.put(ctx.channel(), loginUid);
 				ctx.channel().attr(TID_GENERATOR).set(new AtomicLong(0));
 				ctx.channel().attr(NON_ACKED_MAP).set(new ConcurrentHashMap<Long, JsonObject>());
-				logger.info("[user bind]: uid = {} , channel = {}", loginUid, ctx.channel());
+				log.info("[user bind]: uid = {} , channel = {}", loginUid, ctx.channel());
 				ctx.writeAndFlush(new TextWebSocketFrame("{\"type\":1,\"status\":\"success\"}"));
 				break;
 			case 2: // Query message
@@ -111,18 +113,17 @@ public class WebsocketRouterHandler extends SimpleChannelInboundHandler<WebSocke
 
 	@Override
 	public void channelActive(ChannelHandlerContext ctx) throws Exception {
-		logger.info("[channelActive]:remote address is {} ", ctx.channel().remoteAddress());
+		log.info("[ChannelActive]:remote address is {} ", ctx.channel().remoteAddress());
 	}
 
 	@Override
 	public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-		logger.info("[channelClosed]:remote address is {} ", ctx.channel().remoteAddress());
+		log.info("[ChannelClosed]:remote address is {} ", ctx.channel().remoteAddress());
 	}
 
 	@Override
 	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-		logger.error("process error. uid is {},  channel info {}", channelUser.get(ctx.channel()), ctx.channel(),
-				cause);
+		log.error("Process error: uid is {},  channel info {}", channelUser.get(ctx.channel()), ctx.channel());
 		ctx.channel().close();
 	}
 
@@ -134,49 +135,32 @@ public class WebsocketRouterHandler extends SimpleChannelInboundHandler<WebSocke
 			message.add("tid", new JsonPrimitive(tid));
 			channel.writeAndFlush(new TextWebSocketFrame(message.toString())).addListener(future -> {
 				if (future.isCancelled()) {
-					logger.warn("future has been cancelled. {}, channel: {}", message, channel);
+					log.warn("Future has been cancelled. {}, channel: {}", message, channel);
 				} else if (future.isSuccess()) {
 					addMsgToAckBuffer(channel, message);
-					logger.warn("future has been successfully pushed. {}, channel: {}", message, channel);
+					log.warn("Future has been successfully pushed. {}, channel: {}", message, channel);
 				} else {
-					logger.error("message write fail, {}, channel: {}", message, channel, future.cause());
+					log.error("Message write fail, {}, channel: {}", message, channel, future.cause());
 				}
 			});
 		}
 	}
 
-	/**
-	 * Clear the mapping between user and socket
-	 *
-	 * @param channel
-	 */
 	public void cleanUserChannel(Channel channel) {
 		long uid = channelUser.remove(channel);
 		userChannel.remove(uid);
-		logger.info("[cleanChannel]:remove uid & channel info from gateway, uid is {}, channel is {}", uid, channel);
+		log.info("[CleanChannel]: remove uid & channel info from gateway, uid is {}, channel is {}", uid, channel);
 	}
 
-	/**
-	 * Add the message to ack list
-	 *
-	 * @param channel
-	 * @param msgJson
-	 */
-	public void addMsgToAckBuffer(Channel channel, JsonObject msgJson) {
+	private void addMsgToAckBuffer(Channel channel, JsonObject msgJson) {
 		channel.attr(NON_ACKED_MAP).get().put(msgJson.get("tid").getAsLong(), msgJson);
-		executorService.schedule(() -> {
+		scheduledExecutorService.schedule(() -> {
 			if (channel.isActive()) {
 				checkAndResend(channel, msgJson);
 			}
 		}, 5000, TimeUnit.MILLISECONDS);
 	}
 
-	/**
-	 * Check and resend
-	 *
-	 * @param channel
-	 * @param msgJson
-	 */
 	private void checkAndResend(Channel channel, JsonObject msgJson) {
 		long tid = msgJson.get("tid").getAsLong();
 		int tryTimes = 2;// resend twice

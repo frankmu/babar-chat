@@ -2,8 +2,6 @@ package com.babar.chat.gateway;
 
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.stereotype.Component;
 
 /**
@@ -11,7 +9,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @PropertySource("classpath:application.yml")
-public class ServerConfig {
+public class WebSocketConfig {
 
 	@Value("${babar.chat.websocket.port}")
     public int port;
@@ -31,8 +29,8 @@ public class ServerConfig {
 	@Value("${babar.chat.websocket.workerThreads}")
     public int workerThreads;
 	
-	@Value("${babar.chat.websocket.userThreads}")
-    public int userThreads;
+	@Value("${babar.chat.websocket.handlerThreads}")
+    public int handlerThreads;
 	
 	@Value("${babar.chat.websocket.connTimeoutMills}")
     public int connTimeoutMills;

@@ -3,8 +3,6 @@ package com.babar.chat.gateway.util;
 import io.netty.util.concurrent.FastThreadLocal;
 import io.netty.util.concurrent.FastThreadLocalThread;
 import io.netty.util.internal.StringUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
 import java.util.Locale;
@@ -14,8 +12,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 
 public class EnhancedThreadFactory implements ThreadFactory {
-
-    private final static Logger log = LoggerFactory.getLogger(EnhancedThreadFactory.class);
 
     private static final AtomicInteger poolId = new AtomicInteger();
 
@@ -116,7 +112,7 @@ public class EnhancedThreadFactory implements ThreadFactory {
     private static final class EnhancedRunnableDecorator implements Runnable {
 
         private final Runnable r;
-        private final Map context;
+        private final Map<String, String> context;
 
         EnhancedRunnableDecorator(Runnable r) {
             this.r = r;
