@@ -27,7 +27,7 @@ public class RedisConfiguration {
     public RedisTemplate<Object, Object> redisTemplate() {
         RedisTemplate<Object, Object> redisTemplate = new RedisTemplate<Object, Object>();
         redisTemplate.setConnectionFactory(redisConnectionFactory());
-        GenericToStringSerializer genericToStringSerializer = new GenericToStringSerializer(Object.class);
+        GenericToStringSerializer<Object> genericToStringSerializer = new GenericToStringSerializer<>(Object.class);
 
         redisTemplate.setValueSerializer(genericToStringSerializer);
         redisTemplate.setKeySerializer(new StringRedisSerializer());

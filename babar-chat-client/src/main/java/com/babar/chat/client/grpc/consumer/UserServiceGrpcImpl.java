@@ -2,13 +2,12 @@ package com.babar.chat.client.grpc.consumer;
 
 import io.grpc.ManagedChannel;
 import io.grpc.StatusRuntimeException;
+import lombok.extern.slf4j.Slf4j;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +20,7 @@ import com.babar.chat.core.generate.UserIdRequest;
 import com.babar.chat.core.generate.UserList;
 import com.babar.chat.core.generate.UserServiceGrpc.UserServiceBlockingStub;
 
+@Slf4j
 public class UserServiceGrpcImpl implements UserService {
 
 	@Autowired
@@ -29,8 +29,6 @@ public class UserServiceGrpcImpl implements UserService {
 	@Autowired
 	UserServiceBlockingStub userServiceBlockingStub;
 	
-	private static final Logger logger = Logger.getLogger(UserServiceGrpcImpl.class.getName());
-
 	@Override
 	public com.babar.chat.entity.User login(String email, String password) {
 		try {
@@ -44,7 +42,7 @@ public class UserServiceGrpcImpl implements UserService {
 			res.setUsername(user.getUsername());
 			return res;
 		} catch (StatusRuntimeException e) {
-			logger.log(Level.WARNING, "Grpc failed: {0}", e.getStatus());
+			log.warn("Grpc failed: {0}", e.getStatus());
 		}
 		return null;
 	}
@@ -66,7 +64,7 @@ public class UserServiceGrpcImpl implements UserService {
 			return users;
 
 		} catch (StatusRuntimeException e) {
-			logger.log(Level.WARNING, "Grpc failed: {0}", e.getStatus());
+			log.warn("Grpc failed: {0}", e.getStatus());
 		}
 		return null;
 	}
@@ -95,7 +93,7 @@ public class UserServiceGrpcImpl implements UserService {
 			return res;
 
 		} catch (StatusRuntimeException e) {
-			logger.log(Level.WARNING, "Grpc failed: {0}", e.getStatus());
+			log.warn("Grpc failed: {0}", e.getStatus());
 		}
 		return null;
 	}

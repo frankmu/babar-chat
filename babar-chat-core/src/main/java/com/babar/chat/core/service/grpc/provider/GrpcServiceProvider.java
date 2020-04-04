@@ -2,9 +2,9 @@ package com.babar.chat.core.service.grpc.provider;
 
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
-import java.util.logging.Logger;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -13,11 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Component
 public class GrpcServiceProvider {
-
-    private Server server;
-    private static final Logger logger = Logger.getLogger(GrpcServiceProvider.class.getName());
     
 	@Autowired
 	UserServiceImplGrpc userServiceGrpc;
@@ -27,6 +25,8 @@ public class GrpcServiceProvider {
 	
 	@Value("${babar.chat.grpc.service.port}")
 	private int grpcServicePort;
+	
+    private Server server;
 
     @PostConstruct
     private void start() throws IOException, InterruptedException {
@@ -40,7 +40,7 @@ public class GrpcServiceProvider {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-            logger.info("Grpc Server started, listening on " + grpcServicePort);
+            log.info("Grpc Server started, listening on " + grpcServicePort);
 
             Runtime.getRuntime().addShutdownHook(new Thread() {
                 @Override

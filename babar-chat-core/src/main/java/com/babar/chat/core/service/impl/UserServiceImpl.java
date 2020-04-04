@@ -1,7 +1,5 @@
 package com.babar.chat.core.service.impl;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
@@ -18,15 +16,17 @@ import com.babar.chat.entity.Message;
 import com.babar.chat.entity.User;
 import com.babar.chat.exception.InvalidUserInfoException;
 import com.babar.chat.exception.UserNotExistException;
+import com.babar.chat.util.Constants;
+
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Component
 public class UserServiceImpl implements UserService {
-
-    private static final Logger log = LoggerFactory.getLogger(UserServiceImpl.class);
 
     @Autowired
     private UserRepository userRepository;
@@ -77,7 +77,7 @@ public class UserServiceImpl implements UserService {
         List<Contact> contacts = contactRepository.findContactsByOwnerUidOrderByMidDesc(ownerUser.getUid());
         if (contacts != null) {
             long totalUnread = 0;
-            Object totalUnreadObj = redisTemplate.opsForValue().get(ownerUser.getUid() + "_T");
+            Object totalUnreadObj = redisTemplate.opsForValue().get(ownerUser.getUid() + Constants.TOTAL_UNREAD_SUFFIX);
             if (null != totalUnreadObj) {
                 totalUnread = Long.parseLong((String) totalUnreadObj);
             }
@@ -90,7 +90,7 @@ public class UserServiceImpl implements UserService {
 
                 if (null != contentVO) {
                     long convUnread = 0;
-                    Object convUnreadObj = redisTemplate.opsForHash().get(ownerUser.getUid() + "_C", otherUser.get().getUid());
+                    Object convUnreadObj = redisTemplate.opsForHash().get(ownerUser.getUid() + Constants.CONVERSION_UNREAD_SUFFIX, otherUser.get().getUid());
                     if (null != convUnreadObj) {
                         convUnread = Long.parseLong((String) convUnreadObj);
                     }

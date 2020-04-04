@@ -99,8 +99,8 @@ public class MessageServiceImpl implements MessageService {
         contactRepository.save(messageContactRecipient);
 
         // Update unread count
-        redisTemplate.opsForValue().increment(recipientUid + "_T", 1); //加总未读
-        redisTemplate.opsForHash().increment(recipientUid + "_C", senderUid, 1); //加会话未读
+        redisTemplate.opsForValue().increment(recipientUid + Constants.TOTAL_UNREAD_SUFFIX, 1);
+        redisTemplate.opsForHash().increment(recipientUid + Constants.CONVERSION_UNREAD_SUFFIX, senderUid, 1);
 
         // Push the message to redis
         User self = userRepository.findById(senderUid).get();
@@ -145,7 +145,6 @@ public class MessageServiceImpl implements MessageService {
                 long convUnread = Long.parseLong((String) convUnreadObj);
                 redisTemplate.opsForHash().delete(ownerUid + Constants.CONVERSION_UNREAD_SUFFIX, otherUid);
                 long afterCleanUnread = redisTemplate.opsForValue().increment(ownerUid + Constants.TOTAL_UNREAD_SUFFIX, -convUnread);
-                /** 修正总未读 */
                 if (afterCleanUnread <= 0) {
                     redisTemplate.delete(ownerUid + Constants.TOTAL_UNREAD_SUFFIX);
                 }

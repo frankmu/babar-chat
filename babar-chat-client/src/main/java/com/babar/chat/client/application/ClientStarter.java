@@ -6,8 +6,8 @@ import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
 @ComponentScan({ "com.babar.chat.client" })
-public class ClientApplication {
+public class ClientStarter {
 	public static void main(String[] args) {
-		new SpringApplicationBuilder(ClientApplication.class).logStartupInfo(false).run(args);
+		new SpringApplicationBuilder(ClientStarter.class).logStartupInfo(false).run(args);
 	}
 }
