@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.babar.chat.gateway.service.MessageService;
+import com.babar.chat.util.Constants;
 import com.babar.chat.core.generate.ConversationMessageRequest;
 import com.babar.chat.core.generate.Message;
 import com.babar.chat.core.generate.MessageList;
@@ -27,6 +28,8 @@ public class MessageServiceGrpcImpl implements MessageService {
 
 	@Autowired
 	MessageServiceBlockingStub messageServiceBlockingStub;
+	
+	SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATE_FORMAT);
 
 	@Override
 	public com.babar.chat.dto.MessageDTO sendNewMsg(long senderUid, long recipientUid, String content, int msgType) {
@@ -35,7 +38,7 @@ public class MessageServiceGrpcImpl implements MessageService {
 		Message message = messageServiceBlockingStub.sendMessage(req);
 		Date createTime = null;
 		try {
-			createTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S").parse(message.getCreateTime());
+			createTime = sdf.parse(message.getCreateTime());
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
@@ -55,7 +58,7 @@ public class MessageServiceGrpcImpl implements MessageService {
 		List<com.babar.chat.dto.MessageDTO> messages = messageList.getMessageListList().stream().map(message -> {
 			Date createTime = null;
 			try {
-				createTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S").parse(message.getCreateTime());
+				createTime = sdf.parse(message.getCreateTime());
 			} catch (ParseException e) {
 				e.printStackTrace();
 			}
@@ -74,7 +77,7 @@ public class MessageServiceGrpcImpl implements MessageService {
 		List<com.babar.chat.dto.MessageDTO> messages = messageList.getMessageListList().stream().map(message -> {
 			Date createTime = null;
 			try {
-				createTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S").parse(message.getCreateTime());
+				createTime = sdf.parse(message.getCreateTime());
 			} catch (ParseException e) {
 				e.printStackTrace();
 			}

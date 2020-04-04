@@ -14,6 +14,7 @@ import com.babar.chat.client.service.UserService;
 import com.babar.chat.dto.UserDTO;
 import com.babar.chat.dto.ContactDTO;
 import com.babar.chat.entity.User;
+import com.babar.chat.util.Constants;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -23,6 +24,8 @@ public class UserServiceRestImpl implements UserService {
 
 	@Autowired
 	RestTemplate restTemplate;
+	
+	SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATE_FORMAT);
 
 	@Override
 	public User login(String email, String password) {
@@ -56,7 +59,7 @@ public class UserServiceRestImpl implements UserService {
 				ContactDTO contactInfo = new ContactDTO(node.path("otherUid").asLong(),
 						node.path("otherName").asText(), node.path("otherAvatar").asText(), node.path("mid").asLong(),
 						node.path("type").asInt(), node.path("content").asText(), node.path("convUnread").asLong(),
-						new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").parse(node.path("createTime").asText()));
+						sdf.parse(node.path("createTime").asText()));
 				contacts.add(contactInfo);
 			}
 			UserDTO contact = new UserDTO(ownerUid.asLong(), ownerName.asText(), ownerAvatar.asText(),

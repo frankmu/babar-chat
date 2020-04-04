@@ -8,6 +8,7 @@ import com.babar.chat.core.generate.UserIdRequest;
 import com.babar.chat.core.generate.UserList;
 import com.babar.chat.core.generate.UserServiceGrpc.UserServiceImplBase;
 import com.babar.chat.core.service.UserService;
+import com.babar.chat.util.Constants;
 
 import io.grpc.stub.StreamObserver;
 
@@ -24,7 +25,7 @@ public class UserServiceImplGrpc extends UserServiceImplBase {
 	@Autowired
 	private UserService userService;
 	
-	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S");
+	SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATE_FORMAT);
 
 	@Override
 	public void login(LoginRequest req, StreamObserver<User> responseObserver) {

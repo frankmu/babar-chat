@@ -11,6 +11,7 @@ import com.babar.chat.core.generate.SendMessageRequest;
 import com.babar.chat.core.generate.TotalUnreadCount;
 import com.babar.chat.core.generate.UserIdRequest;
 import com.babar.chat.core.service.MessageService;
+import com.babar.chat.util.Constants;
 
 import io.grpc.stub.StreamObserver;
 
@@ -27,7 +28,7 @@ public class MessageServiceImplGrpc extends MessageServiceImplBase {
 	@Autowired
 	private MessageService messageService;
 	
-	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S");
+	SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATE_FORMAT);
 
 	@Override
 	public void sendMessage(SendMessageRequest req, StreamObserver<Message> responseObserver) {

@@ -19,6 +19,7 @@ import com.babar.chat.core.generate.User;
 import com.babar.chat.core.generate.UserIdRequest;
 import com.babar.chat.core.generate.UserList;
 import com.babar.chat.core.generate.UserServiceGrpc.UserServiceBlockingStub;
+import com.babar.chat.util.Constants;
 
 @Slf4j
 public class UserServiceGrpcImpl implements UserService {
@@ -28,6 +29,8 @@ public class UserServiceGrpcImpl implements UserService {
 	
 	@Autowired
 	UserServiceBlockingStub userServiceBlockingStub;
+	
+	SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATE_FORMAT);
 	
 	@Override
 	public com.babar.chat.entity.User login(String email, String password) {
@@ -78,8 +81,7 @@ public class UserServiceGrpcImpl implements UserService {
 					.map(contactInfo -> {
 						Date createTime = null;
 						try {
-							createTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S")
-									.parse(contactInfo.getCreateTime());
+							createTime = sdf.parse(contactInfo.getCreateTime());
 						} catch (ParseException e) {
 							e.printStackTrace();
 						}

@@ -11,6 +11,7 @@ import org.springframework.web.client.RestTemplate;
 
 import com.babar.chat.client.service.MessageService;
 import com.babar.chat.dto.MessageDTO;
+import com.babar.chat.util.Constants;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -19,6 +20,8 @@ public class MessageServiceRestImpl implements MessageService {
 
 	@Autowired
 	RestTemplate restTemplate;
+
+	SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATE_FORMAT);
 
 	@Override
 	public MessageDTO sendNewMsg(long senderUid, long recipientUid, String content, int msgType) {
@@ -41,7 +44,8 @@ public class MessageServiceRestImpl implements MessageService {
 		List<MessageDTO> list = new ArrayList<MessageDTO>();
 		try {
 			ResponseEntity<String> response = restTemplate.getForEntity(
-					"/getConversationMessage?ownerUid={ownerUid}&otherUid={otherUid}", String.class, ownerUid, otherUid);
+					"/getConversationMessage?ownerUid={ownerUid}&otherUid={otherUid}", String.class, ownerUid,
+					otherUid);
 			ObjectMapper mapper = new ObjectMapper();
 			JsonNode root = mapper.readTree(response.getBody());
 			for (JsonNode node : root) {
@@ -55,13 +59,13 @@ public class MessageServiceRestImpl implements MessageService {
 	}
 
 	@Override
-	public List<MessageDTO> queryNewerMsgFrom(long ownerUid, long otherUid, long fromMid) {		
+	public List<MessageDTO> queryNewerMsgFrom(long ownerUid, long otherUid, long fromMid) {
 		List<MessageDTO> list = new ArrayList<MessageDTO>();
 		try {
 			ResponseEntity<String> response = restTemplate.getForEntity(
 					"/getNewMessageFrom?ownerUid={ownerUid}&otherUid={otherUid}&fromMid={fromMid}", String.class,
 					ownerUid, otherUid, fromMid);
-			if(response.getBody() != null) {
+			if (response.getBody() != null) {
 				ObjectMapper mapper = new ObjectMapper();
 				JsonNode root = mapper.readTree(response.getBody());
 				for (JsonNode node : root) {
@@ -93,8 +97,8 @@ public class MessageServiceRestImpl implements MessageService {
 		JsonNode otherName = root.path("otherUid");
 		try {
 			return new MessageDTO(mid.asLong(), content.asText(), ownerUid.asLong(), type.asInt(), otherUid.asLong(),
-					new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").parse(createTime.asText()),
-					ownerUidAvatar.asText(), otherUidAvatar.asText(), ownerName.asText(), otherName.asText());
+					sdf.parse(createTime.asText()), ownerUidAvatar.asText(), otherUidAvatar.asText(),
+					ownerName.asText(), otherName.asText());
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
