@@ -5,8 +5,8 @@ import com.babar.chat.dao.ContactRepository;
 import com.babar.chat.dao.MessageRepository;
 import com.babar.chat.dao.UserMessageRepository;
 import com.babar.chat.dao.UserRepository;
+import com.babar.chat.dto.UserDTO;
 import com.babar.chat.dto.ContactDTO;
-import com.babar.chat.dto.ContactInfo;
 import com.babar.chat.dto.MessageDTO;
 import com.babar.chat.entity.ContactMultiKeys;
 import com.babar.chat.entity.Contact;
@@ -156,7 +156,7 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    public ContactDTO queryContacts(long ownerUid) {
+    public UserDTO queryContacts(long ownerUid) {
         List<Contact> contacts = contactRepository.findContactsByOwnerUidOrderByMidDesc(ownerUid);
         if (contacts != null) {
             User user = userRepository.findById(ownerUid).get();
@@ -166,7 +166,7 @@ public class MessageServiceImpl implements MessageService {
                 totalUnread = Long.parseLong((String) totalUnreadObj);
             }
 
-            ContactDTO contactVO = new ContactDTO(user.getUid(), user.getUsername(), user.getAvatar(), totalUnread);
+            UserDTO contactVO = new UserDTO(user.getUid(), user.getUsername(), user.getAvatar(), totalUnread);
             contacts.stream().forEach(contact -> {
                 Long mid = contact.getMid();
                 Message contentVO = contentRepository.findById(mid).get();
@@ -178,7 +178,7 @@ public class MessageServiceImpl implements MessageService {
                     if (null != convUnreadObj) {
                         convUnread = Long.parseLong((String) convUnreadObj);
                     }
-                    ContactInfo contactInfo = new ContactInfo(otherUser.getUid(), otherUser.getUsername(), otherUser.getAvatar(), mid, contact.getType(), contentVO.getContent(), convUnread, contact.getCreateTime());
+                    ContactDTO contactInfo = new ContactDTO(otherUser.getUid(), otherUser.getUsername(), otherUser.getAvatar(), mid, contact.getType(), contentVO.getContent(), convUnread, contact.getCreateTime());
                     contactVO.appendContact(contactInfo);
                 }
             });

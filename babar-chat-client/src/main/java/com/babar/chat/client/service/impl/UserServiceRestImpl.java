@@ -10,8 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import com.babar.chat.client.service.UserService;
+import com.babar.chat.dto.UserDTO;
 import com.babar.chat.dto.ContactDTO;
-import com.babar.chat.dto.ContactInfo;
 import com.babar.chat.entity.User;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -38,7 +38,7 @@ public class UserServiceRestImpl implements UserService {
 	}
 
 	@Override
-	public ContactDTO getContacts(long ownerUserId) {
+	public UserDTO getContacts(long ownerUserId) {
 		try {
 			ResponseEntity<String> response = restTemplate.getForEntity("/getContactByOwnerUserId?ownerUserId={ownerUserId}",
 					String.class, ownerUserId);
@@ -50,10 +50,10 @@ public class UserServiceRestImpl implements UserService {
 			JsonNode totalUnread = root.path("totalUnread");
 			JsonNode contactInfoList = root.path("contactInfoList");
 
-			ContactDTO contact = new ContactDTO(ownerUid.asLong(), ownerName.asText(), ownerAvatar.asText(),
+			UserDTO contact = new UserDTO(ownerUid.asLong(), ownerName.asText(), ownerAvatar.asText(),
 					totalUnread.asLong());
 			for (JsonNode node : contactInfoList) {
-				ContactInfo contactInfo = new ContactInfo(node.path("otherUid").asLong(),
+				ContactDTO contactInfo = new ContactDTO(node.path("otherUid").asLong(),
 						node.path("otherName").asText(), node.path("otherAvatar").asText(), node.path("mid").asLong(),
 						node.path("type").asInt(), node.path("content").asText(), node.path("convUnread").asLong(),
 						new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").parse(node.path("createTime").asText()));

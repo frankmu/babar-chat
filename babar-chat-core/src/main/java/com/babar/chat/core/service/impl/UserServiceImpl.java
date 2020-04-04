@@ -11,8 +11,8 @@ import com.babar.chat.core.service.UserService;
 import com.babar.chat.dao.ContactRepository;
 import com.babar.chat.dao.MessageRepository;
 import com.babar.chat.dao.UserRepository;
+import com.babar.chat.dto.UserDTO;
 import com.babar.chat.dto.ContactDTO;
-import com.babar.chat.dto.ContactInfo;
 import com.babar.chat.entity.Contact;
 import com.babar.chat.entity.Message;
 import com.babar.chat.entity.User;
@@ -72,7 +72,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ContactDTO getContacts(User ownerUser) {
+    public UserDTO getContacts(User ownerUser) {
         List<Contact> contacts = contactRepository.findContactsByOwnerUidOrderByMidDesc(ownerUser.getUid());
         if (contacts != null) {
             long totalUnread = 0;
@@ -81,7 +81,7 @@ public class UserServiceImpl implements UserService {
                 totalUnread = Long.parseLong((String) totalUnreadObj);
             }
 
-            final ContactDTO contactVO = new ContactDTO(ownerUser.getUid(), ownerUser.getUsername(), ownerUser.getAvatar(), totalUnread);
+            final UserDTO contactVO = new UserDTO(ownerUser.getUid(), ownerUser.getUsername(), ownerUser.getAvatar(), totalUnread);
             contacts.stream().forEach(contact -> {
                 Long mid = contact.getMid();
                 Optional<Message> contentVO = contentRepository.findById(mid);
@@ -93,7 +93,7 @@ public class UserServiceImpl implements UserService {
                     if (null != convUnreadObj) {
                         convUnread = Long.parseLong((String) convUnreadObj);
                     }
-                    ContactInfo contactInfo = new ContactInfo(otherUser.get().getUid(), otherUser.get().getUsername(), otherUser.get().getAvatar(), mid, contact.getType(), contentVO.get().getContent(), convUnread, contact.getCreateTime());
+                    ContactDTO contactInfo = new ContactDTO(otherUser.get().getUid(), otherUser.get().getUsername(), otherUser.get().getAvatar(), mid, contact.getType(), contentVO.get().getContent(), convUnread, contact.getCreateTime());
                     contactVO.appendContact(contactInfo);
                 }
             });
@@ -110,7 +110,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	@Transactional
-	public ContactDTO getContactsByOwnerId(long ownerUserId) {
+	public UserDTO getContactsByOwnerId(long ownerUserId) {
 		return getContacts(userRepository.getOne(ownerUserId));
 	}
 }

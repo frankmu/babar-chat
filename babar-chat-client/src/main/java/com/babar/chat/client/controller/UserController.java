@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.babar.chat.client.service.UserService;
-import com.babar.chat.dto.ContactDTO;
+import com.babar.chat.dto.UserDTO;
 import com.babar.chat.entity.User;
 import com.babar.chat.exception.InvalidUserInfoException;
 import com.babar.chat.exception.UserNotExistException;
@@ -43,7 +43,7 @@ public class UserController {
             List<User> otherUsers = userService.getAllUsersExcept(loginUser.getUid());
             model.addAttribute("otherUsers", otherUsers);
 
-            ContactDTO contactVO = userService.getContacts(loginUser.getUid());
+            UserDTO contactVO = userService.getContacts(loginUser.getUid());
             model.addAttribute("contactVO", contactVO);
             return "index";
 
@@ -63,7 +63,7 @@ public class UserController {
         List<User> otherUsers = userService.getAllUsersExcept(loginUser.getUid());
         model.addAttribute("otherUsers", otherUsers);
 
-        ContactDTO contactVO = userService.getContacts(loginUser.getUid());
+        UserDTO contactVO = userService.getContacts(loginUser.getUid());
         model.addAttribute("contactVO", contactVO);
         return "index_ws";
     }

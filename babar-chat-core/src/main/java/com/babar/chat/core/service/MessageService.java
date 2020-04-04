@@ -2,7 +2,7 @@ package com.babar.chat.core.service;
 
 import java.util.List;
 
-import com.babar.chat.dto.ContactDTO;
+import com.babar.chat.dto.UserDTO;
 import com.babar.chat.dto.MessageDTO;
 
 public interface MessageService {
@@ -36,7 +36,7 @@ public interface MessageService {
      * @param ownerUid
      * @return
      */
-    ContactDTO queryContacts(long ownerUid);
+    UserDTO queryContacts(long ownerUid);
 
     /**
      * @param ownerUid

@@ -72,11 +72,11 @@ public class UserServiceGrpcImpl implements UserService {
 	}
 
 	@Override
-	public com.babar.chat.dto.ContactDTO getContacts(long ownerUserId) {
+	public com.babar.chat.dto.UserDTO getContacts(long ownerUserId) {
 		try {
 			UserIdRequest req = UserIdRequest.newBuilder().setUid(ownerUserId).build();
 			Contact contact = userServiceBlockingStub.getContactByOwnerUserId(req);
-			List<com.babar.chat.dto.ContactInfo> contactInfoList = contact.getContactInfoListList().stream()
+			List<com.babar.chat.dto.ContactDTO> contactInfoList = contact.getContactInfoListList().stream()
 					.map(contactInfo -> {
 						Date createTime = null;
 						try {
@@ -85,12 +85,12 @@ public class UserServiceGrpcImpl implements UserService {
 						} catch (ParseException e) {
 							e.printStackTrace();
 						}
-						return new com.babar.chat.dto.ContactInfo(
+						return new com.babar.chat.dto.ContactDTO(
 								contactInfo.getOtherUid(), contactInfo.getOtherName(), contactInfo.getOtherAvatar(),
 								contactInfo.getMid(), contactInfo.getType(), contactInfo.getContent(),
 								contactInfo.getConvUnread(), createTime);
 					}).collect(Collectors.toList());
-			com.babar.chat.dto.ContactDTO res = new com.babar.chat.dto.ContactDTO(contact.getOwnerUid(),
+			com.babar.chat.dto.UserDTO res = new com.babar.chat.dto.UserDTO(contact.getOwnerUid(),
 					contact.getOwnerName(), contact.getOwnerAvatar(), contact.getTotalUnread());
 			res.setContactInfoList(contactInfoList);
 			return res;
